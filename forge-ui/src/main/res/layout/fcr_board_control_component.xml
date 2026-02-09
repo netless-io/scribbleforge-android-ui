@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <include
+        android:id="@+id/phone_port_layout"
+        layout="@layout/fcr_board_control_component_phone_port"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/phone_load_layout"
+        layout="@layout/fcr_board_control_component_phone_land"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/tablet_layout"
+        layout="@layout/fcr_board_control_component_pad"
+        android:visibility="gone" />
+</LinearLayout>

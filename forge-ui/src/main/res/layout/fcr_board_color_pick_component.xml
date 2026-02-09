@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    app:cardBackgroundColor="@color/fcr_mobile_ui_scene_color_popup_block1"
+    app:cardCornerRadius="@dimen/fcr_cornerradius_m"
+    app:cardElevation="2dp"
+    tools:layout_gravity="center_horizontal">
+
+    <LinearLayout
+        android:id="@+id/color_pick_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/fcr_board_settings_panel_size"
+        android:divider="@drawable/fcr_board_divider_width_10"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/fcr_board_color_pick_padding_main"
+        android:showDividers="middle">
+
+        <io.agora.board.forge.ui.component.FcrBoardDotView
+            android:id="@+id/dot1"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            app:circleColor="@color/fcr_ui_scene_icontext1"
+            app:dotColor="@color/fcr_ui_scene_icontext5"
+            app:dotSize="@dimen/fcr_board_stroke_width_level_1" />
+
+        <io.agora.board.forge.ui.component.FcrBoardDotView
+            android:id="@+id/dot2"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            app:circleColor="@color/fcr_ui_scene_icontext1"
+            app:dotColor="@color/fcr_ui_scene_icontext5"
+            app:dotSize="@dimen/fcr_board_stroke_width_level_2" />
+
+        <io.agora.board.forge.ui.component.FcrBoardDotView
+            android:id="@+id/dot3"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            app:circleColor="@color/fcr_ui_scene_icontext1"
+            app:dotColor="@color/fcr_ui_scene_icontext5"
+            app:dotSize="@dimen/fcr_board_stroke_width_level_3" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="@dimen/fcr_v_divider_normal"
+            android:layout_height="@dimen/fcr_board_color_pick_divider_size"
+            android:background="@color/fcr_ui_scene_line3" />
+
+        <ImageView
+            android:id="@+id/color1"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/fcr_board_color_show"
+            app:tint="@color/fcr_whiteboard_color_yellow" />
+
+        <ImageView
+            android:id="@+id/color2"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/fcr_board_color_show"
+            app:tint="@color/fcr_whiteboard_color_blue" />
+
+        <ImageView
+            android:id="@+id/color3"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/fcr_board_color_show"
+            app:tint="@color/fcr_whiteboard_color_purple" />
+
+        <ImageView
+            android:id="@+id/color4"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/fcr_board_color_show"
+            app:tint="@color/fcr_whiteboard_color_red" />
+
+        <ImageView
+            android:id="@+id/color5"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/fcr_board_color_show"
+            app:tint="@color/fcr_whiteboard_color_green" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">ScribbleForge</string>
+    <string name="test">test</string>
+    <string name="prev_page">Previous Page</string>
+    <string name="next_page">Next Page</string>
+    <string name="add_page">Add Page</string>
+    <string name="remove_page">Remove Page</string>
+</resources>

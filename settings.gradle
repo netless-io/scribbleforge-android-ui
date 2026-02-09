@@ -1,0 +1,40 @@
+pluginManagement {
+    repositories {
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+
+        mavenLocal() // Include local Maven repository
+    }
+}
+
+rootProject.name = "ForgeUI"
+include ':app'
+include ':forge-ui'
+
+def localPropertiesFile = new File(rootProject.projectDir, "local.properties")
+def properties = new Properties()
+
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader("UTF-8") { reader -> properties.load(reader) }
+
+    def forgeRoom = properties.getProperty("app.library.forge-room")
+    if (forgeRoom != null) {
+        include ':forge-room'
+        project(':forge-room').projectDir = new File("$forgeRoom")
+    }
+}

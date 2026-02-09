@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/fcr_board_scene_downloading_panel_width"
+    android:layout_height="@dimen/fcr_board_scene_downloading_panel_height"
+    android:layout_margin="5dp"
+    app:cardBackgroundColor="@color/fcr_mobile_ui_scene_color_popup_block1"
+    app:cardCornerRadius="@dimen/fcr_cornerradius_m"
+    app:cardElevation="2dp"
+    tools:layout_gravity="center_horizontal"
+    tools:parentTag="androidx.cardview.widget.CardView">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingHorizontal="@dimen/fcr_board_scene_downloading_panel_padding_h"
+        android:paddingVertical="@dimen/fcr_board_scene_downloading_panel_padding_v">
+
+        <ImageView
+            android:id="@+id/iv_icon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical"
+            android:src="@mipmap/fcr_download2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ProgressBar
+            android:id="@+id/pb_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/fcr_board_scene_downloading_progressbar_height"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="20dp"
+            android:progressDrawable="@drawable/fcr_board_downloading_progress"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/iv_icon"
+            tools:max="100"
+            tools:progress="70" />
+
+        <TextView
+            android:id="@+id/tv_downloading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/fcr_board_scene_downloading"
+            android:textColor="@color/fcr_ui_scene_icontext1"
+            android:textSize="@dimen/fcr_bars_text_12sp"
+            app:layout_constraintStart_toStartOf="@id/pb_progress"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_downloading_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/fcr_ui_scene_icontext1"
+            android:textSize="@dimen/fcr_bars_text_12sp"
+            app:layout_constraintEnd_toEndOf="@id/pb_progress"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/fcr_board_scene_downloading_progress" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</merge>

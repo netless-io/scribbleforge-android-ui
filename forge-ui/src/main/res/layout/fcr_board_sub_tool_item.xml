@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fl_tool"
+    android:layout_width="42dp"
+    android:layout_height="42dp"
+    android:background="@drawable/fcr_board_sub_tool_item_bg">
+
+    <ImageView
+        android:id="@+id/iv_tool"
+        android:layout_width="@dimen/fcr_board_icon_width"
+        android:layout_height="@dimen/fcr_board_icon_height"
+        android:layout_gravity="center"
+        android:src="@mipmap/fcr_whiteboard_shap_square"
+        app:tint="@color/fcr_ui_scene_icontext1" />
+</FrameLayout>

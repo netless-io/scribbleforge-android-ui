@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+    android:gravity="center">
+
+    <LinearLayout
+        android:id="@+id/agora_toast_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="44dp"
+        android:gravity="center"
+        android:minWidth="100dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        tools:background="#f00">
+
+        <ImageView
+            android:id="@+id/agora_toast_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginRight="5dp"
+            android:src="@mipmap/fcr_v2_toast_alarm_icon"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/agora_toast_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:gravity="center_vertical"
+            android:textAlignment="gravity"
+            android:textColor="@color/fcr_ui_scene_white10"
+            android:textSize="15dp"
+            tools:text="This is a toast message" />
+    </LinearLayout>
+</RelativeLayout>

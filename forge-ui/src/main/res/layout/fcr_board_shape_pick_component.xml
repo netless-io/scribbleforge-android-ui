@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    app:cardBackgroundColor="@color/fcr_mobile_ui_scene_color_popup_block1"
+    app:cardCornerRadius="@dimen/fcr_cornerradius_m"
+    app:cardElevation="2dp"
+    tools:layout_gravity="center_horizontal">
+
+    <LinearLayout
+        android:id="@+id/ll_shape_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/fcr_board_settings_panel_size"
+        android:divider="@drawable/fcr_board_divider_width_10"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/fcr_board_shape_pick_padding_main"
+        android:showDividers="middle"
+        tools:listitem="@layout/fcr_board_sub_tool_item" />
+</androidx.cardview.widget.CardView>

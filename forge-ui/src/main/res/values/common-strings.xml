@@ -1,0 +1,49 @@
+<resources>
+    <!-- common: generally a noun or verb with a real meaning -->
+
+    <!-- cross module -->
+
+    <!-- board module -->
+    <string name="fcr_board_status_bar_exit">退出绘制</string>
+    <string name="fcr_board_scene_downloading">板书正在下载中…</string>
+    <string name="fcr_board_scene_downloading_success">板书成功</string>
+    <string name="fcr_board_scene_downloading_failure">板书失败</string>
+    <string name="fcr_board_scene_downloading_progress">%1$s%%</string>
+    <string name="fcr_board_save_success">图片存储成功</string>
+    <string name="fcr_board_save_failure">图片下载失败</string>
+    <string name="fcr_board_white_board">白板</string>
+    <string name="fcr_board_black_board">黑板</string>
+    <string name="fcr_board_green_board">粉笔板</string>
+    <string name="fcr_board_toast_two_finger_move">双指移动白板</string>
+    <string name="fcr_board_toast_expanded">竖屏最大化，可以双指横行移动画布</string>
+    <string name="fcr_board_toast_collapsed">已适应窗口大小</string>
+    <string name="fcr_board_toast_selector">可选择内容进行编辑</string>
+    <string name="fcr_board_toast_curve">画笔</string>
+    <string name="fcr_board_toast_laser">激光笔</string>
+    <string name="fcr_board_toast_shape">形状</string>
+    <string name="fcr_board_toast_text">请输入文字</string>
+    <string name="fcr_board_toast_eraser">橡皮擦</string>
+    <string name="fcr_board_toast_clicker">点击工具</string>
+    <string name="fcr_board_toast_rectangle">方形</string>
+    <string name="fcr_board_toast_triangle">三角形</string>
+    <string name="fcr_board_toast_circle">圆形</string>
+    <string name="fcr_board_toast_straight">直线</string>
+    <string name="fcr_board_toast_arrow">箭头</string>
+    <string name="fcr_board_toast_hand">拖拽</string>
+    <string name="fcr_board_toast_change_color">更改颜色和笔触大小</string>
+    <string name="fcr_board_toast_change_bg">更换选择白板底色</string>
+    <string name="fcr_board_toast_change_bg_white">已选择白色板</string>
+    <string name="fcr_board_toast_change_bg_black">已选择黑色板</string>
+    <string name="fcr_board_toast_change_bg_green">已选择粉笔绿板</string>
+    <string name="fcr_board_toast_stop_share">停止白板中…</string>
+    <string name="fcr_board_toast_start_share">开启白板中…</string>
+    <string name="fcr_board_toast_share_failed">白板共享失败</string>
+    <string name="fcr_board_toast_stop_share_failed">停止白板共享失败</string>
+    <string name="fcr_board_toast_start_share_failed">开启白板共享失败</string>
+    <string name="fcr_board_toast_download_permission_denied">下载板书需要存储权限</string>
+    <string name="fcr_board_toast_share_stopped">共享已停止</string>
+    <string name="fcr_board_dialog_share_stopped_title">你的共享被停止</string>
+    <string name="fcr_board_dialog_share_stopped_message_host">主持人{%1$s}已停止您的共享</string>
+    <string name="fcr_board_dialog_share_stopped_message_cohost">联合主持人{%1$s}已停止你的共享</string>
+    <string name="fcr_board_dialog_share_stopped_message_ok">知道了</string>
+</resources>

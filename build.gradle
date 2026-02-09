@@ -1,0 +1,38 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    ext {
+        minSdkVersion = 21
+        targetSdkVersion = 34
+    }
+}
+
+plugins {
+    alias(libs.plugins.androidApplication) apply false
+    alias(libs.plugins.androidLibrary) apply false
+    alias(libs.plugins.jetbrainsKotlinAndroid) apply false
+    alias(libs.plugins.vanniktechMavenPublish) apply true
+}
+
+import com.vanniktech.maven.publish.SonatypeHost
+
+subprojects {
+    def libs = ['forge-ui']
+
+    if (libs.contains(name)) {
+        afterEvaluate {
+            mavenPublishing {
+                publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+                signAllPublications()
+            }
+
+            publishing {
+                repositories {
+                    maven {
+                        name = "local"
+                        url = uri('/Users/flb/MavenRepo')
+                    }
+                }
+            }
+        }
+    }
+}
