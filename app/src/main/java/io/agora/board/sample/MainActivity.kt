@@ -11,7 +11,6 @@ import io.agora.board.forge.Room
 import io.agora.board.forge.sample.BuildConfig
 import io.agora.board.forge.sample.databinding.ActivityMainBinding
 import io.agora.board.sample.page.BaseActivity
-import io.agora.board.sample.page.apaas.ApaasSampleActivity
 import io.agora.board.sample.page.app.SampleWhiteboardActivity
 import io.agora.board.sample.page.app.WhiteboardUIActivity
 import io.agora.board.sample.util.KvStore
@@ -26,7 +25,6 @@ class MainActivity : BaseActivity() {
 
     // 测试页面映射表，支持后期动态添加
     private val testPages = listOf(
-        TestPage("Apaas测试", ApaasSampleActivity::class.java),
         TestPage("单白板测试", SampleWhiteboardActivity::class.java),
     )
 

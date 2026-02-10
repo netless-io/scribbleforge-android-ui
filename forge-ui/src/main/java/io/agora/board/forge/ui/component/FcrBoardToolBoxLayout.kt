@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import io.agora.board.forge.ui.R
-import io.agora.board.forge.ui.contract.model.ToolType
+import io.agora.board.forge.ui.model.model.ToolType
 import io.agora.board.forge.ui.databinding.FcrBoardToolBoxComponentBinding
 
 /**

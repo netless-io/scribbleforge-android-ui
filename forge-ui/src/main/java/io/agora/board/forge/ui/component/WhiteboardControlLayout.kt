@@ -1,66 +1,47 @@
-package io.agora.board.sample.page.apaas
+package io.agora.board.forge.ui.component
 
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.animation.AnimationUtils
-import androidx.annotation.ColorInt
-import androidx.core.content.ContextCompat
+import android.widget.FrameLayout
 import androidx.core.view.isVisible
+import io.agora.board.forge.RoomCallback
+import io.agora.board.forge.RoomError
 import io.agora.board.forge.ui.R
-import io.agora.board.forge.ui.component.FcrBitmapUtils
-import io.agora.board.forge.ui.component.FcrBoardBgPickLayout
-import io.agora.board.forge.ui.component.FcrBoardColorPickLayout
-import io.agora.board.forge.ui.component.FcrBoardShapePickLayout
-import io.agora.board.forge.ui.component.FcrBoardToolBoxLayout
-import io.agora.board.forge.ui.component.FcrBoardToolBoxType
-import io.agora.board.forge.ui.component.FcrBoardUiDownloadingState
-import io.agora.board.forge.ui.component.FcrBoardUiLayoutShownData
-import io.agora.board.forge.ui.component.FcrCenterToast
-import io.agora.board.forge.ui.component.FcrDeviceOrientation
-import io.agora.board.forge.ui.component.FcrPermissionsFragment
-import io.agora.board.forge.ui.component.ToolBoxItem
-import io.agora.board.forge.ui.component.animateHide
-import io.agora.board.forge.ui.component.animateShow
-import io.agora.board.forge.ui.component.defaultDrawConfig
-import io.agora.board.forge.ui.component.toastResId
-import io.agora.board.forge.ui.contract.BoardMainWindow
-import io.agora.board.forge.ui.contract.model.ForgeCallback
-import io.agora.board.forge.ui.contract.model.ForgeError
-import io.agora.board.forge.ui.contract.model.ForgeProgressCallback
-import io.agora.board.forge.ui.contract.model.RoomConnectionState
-import io.agora.board.forge.ui.contract.model.ToolType
-import io.agora.board.forge.ui.contract.model.UserInfo
+import io.agora.board.forge.ui.model.model.ForgeError
+import io.agora.board.forge.ui.model.model.ForgeProgressCallback
+import io.agora.board.forge.ui.model.model.ToolType
 import io.agora.board.forge.ui.databinding.FcrBoardControlComponentBinding
-import io.agora.board.forge.ui.internal.control.BoardRoomObserverAdapter
+import io.agora.board.forge.whiteboard.SimpleWhiteboardListener
+import io.agora.board.forge.whiteboard.WhiteboardApplication
+import io.agora.board.forge.whiteboard.WhiteboardToolType
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
-/**
- * author : fenglibin
- * date : 2024/5/27
- * description : 白板控制组件
- */
-class FcrWhiteboardControlComponent : FcrBaseComponent {
-    constructor(context: Context) : super(context)
-    constructor(context: Context, attr: AttributeSet) : super(context, attr)
-    constructor(context: Context, attr: AttributeSet, defStyleAttr: Int) : super(context, attr, defStyleAttr)
+class WhiteboardControlLayout @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+) : FrameLayout(context, attrs, defStyleAttr) {
+    private val mainScope = CoroutineScope(Dispatchers.Main)
 
     private val binding = FcrBoardControlComponentBinding.inflate(LayoutInflater.from(context), this, true)
-
-    private var boardMainView: BoardMainWindow? = null
+    private var whiteboardApp: WhiteboardApplication? = null
     private var drawConfig = defaultDrawConfig(context)
     private var layoutShownData = FcrBoardUiLayoutShownData()
 
-    // 图片下载中标志
     private val isDownloading = AtomicBoolean(false)
     private var downloadHideJob: Job? = null
 
@@ -69,7 +50,6 @@ class FcrWhiteboardControlComponent : FcrBaseComponent {
         setupStrokeSettingListener()
         setupShapePickListener()
         setupBgPickLayout()
-
         adjustLayoutForOrientation()
     }
 
@@ -79,19 +59,11 @@ class FcrWhiteboardControlComponent : FcrBaseComponent {
                 when (item.type) {
                     FcrBoardToolBoxType.Tool -> onToolClick(item)
                     FcrBoardToolBoxType.Stroke -> onColorPickClick()
+                    FcrBoardToolBoxType.Clear -> onClearClick()
+                    FcrBoardToolBoxType.Undo -> onUndoClick()
+                    FcrBoardToolBoxType.Redo -> onRedoClick()
                     FcrBoardToolBoxType.Download -> onDownloadClick()
                     FcrBoardToolBoxType.Background -> onBgPickClick()
-                    FcrBoardToolBoxType.Clear -> {
-                        boardMainView?.getWhiteboardApp()?.clean()
-                    }
-
-                    FcrBoardToolBoxType.Undo -> {
-                        boardMainView?.getWhiteboardApp()?.undo()
-                    }
-
-                    FcrBoardToolBoxType.Redo -> {
-                        boardMainView?.getWhiteboardApp()?.redo()
-                    }
                 }
             }
         }
@@ -100,7 +72,7 @@ class FcrWhiteboardControlComponent : FcrBaseComponent {
         binding.tabletLayout.boardToolBox.setToolBoxListener(toolBoxListener)
 
         binding.tabletLayout.flExitDraw.setOnClickListener {
-
+            this@WhiteboardControlLayout.visibility = GONE
         }
     }
 
@@ -150,33 +122,48 @@ class FcrWhiteboardControlComponent : FcrBaseComponent {
         ).forEach { it.setBoardBgPickListener(bgPickListener) }
     }
 
-    private val boardRoomObserver = object : BoardRoomObserverAdapter() {
-        override fun onConnectionStateUpdated(state: RoomConnectionState) {
-            if (state == RoomConnectionState.Connected) {
-                setBoardView(boardRoomControl.getMainWindow())
-                setBoardBackgroundColor(Color.parseColor("#ffe655"))
-            }
+    private val whiteboardListener = object : SimpleWhiteboardListener() {
+        override fun onUndoStackLengthUpdate(whiteboard: WhiteboardApplication, length: Int) {
+            Log.d("WhiteboardControlLayout", "Undo stack length updated: $length")
+            listOf(
+                binding.phonePortLayout.boardToolBox,
+                binding.phoneLoadLayout.boardToolBox,
+                binding.tabletLayout.boardToolBox
+            ).forEach { it.setUndoEnabled(length > 0) }
         }
 
-        override fun onBoardBackgroundColorUpdated(color: String, operatorUser: UserInfo?) {
-            setBoardBackgroundColor(fromRGBString(color))
+        override fun onRedoStackLengthUpdate(whiteboard: WhiteboardApplication, length: Int) {
+            Log.d("WhiteboardControlLayout", "Redo stack length updated: $length")
+            listOf(
+                binding.phonePortLayout.boardToolBox,
+                binding.phoneLoadLayout.boardToolBox,
+                binding.tabletLayout.boardToolBox
+            ).forEach { it.setRedoEnabled(length > 0) }
         }
     }
 
-    override fun initView(provider: IUIProvider) {
-        super.initView(provider)
-
-        boardRoomControl.addObserver(boardRoomObserver)
-        setBoardView(boardRoomControl.getMainWindow())
-        setBoardBackgroundColor(
-            fromRGBString(
-                boardRoomControl.getBoardBackgroundColor()
-            )
-        )
+    fun attachWhiteboard(app: WhiteboardApplication) {
+        this.whiteboardApp = app
+        syncBoardViewState()
+        updateDrawSettings()
+        app.addListener(whiteboardListener)
     }
 
-    override fun release() {
-        boardRoomControl.removeObserver(boardRoomObserver)
+    fun detachWhiteboard() {
+        this.whiteboardApp?.removeListener(whiteboardListener)
+        this.whiteboardApp = null
+    }
+
+    private fun onClearClick() {
+        whiteboardApp?.clean()
+    }
+
+    private fun onUndoClick() {
+        whiteboardApp?.undo()
+    }
+
+    private fun onRedoClick() {
+        whiteboardApp?.redo()
     }
 
     private fun onToolClick(item: ToolBoxItem) {
@@ -226,14 +213,6 @@ class FcrWhiteboardControlComponent : FcrBaseComponent {
 
     private fun onDownloadClick() {
         performDownload()
-        if (FcrPermissionsFragment.Companion.hasSaveImagePermissions(context)) {
-            performDownload()
-        } else {
-            FcrPermissionsFragment.Companion.showSaveImagePermission(
-                provider.getActivityPage(),
-                onGranted = { performDownload() },
-                onDenied = { FcrCenterToast.normal(context, R.string.fcr_board_toast_download_permission_denied) })
-        }
     }
 
     private fun performDownload() {
@@ -257,8 +236,7 @@ class FcrWhiteboardControlComponent : FcrBaseComponent {
             FcrDeviceOrientation.TabletPortrait, FcrDeviceOrientation.TabletLandscape -> binding.tabletLayout.boardSceneDownloadingLayout
         }
         downloadLayout.setDownloadState(FcrBoardUiDownloadingState.DOWNLOADING)
-        boardMainView?.getAllWindowsSnapshotImageList(object :
-            ForgeProgressCallback<Array<Bitmap>> {
+        getAllWindowsSnapshotImageList(object : ForgeProgressCallback<Array<Bitmap>> {
             override fun onProgress(progress: Int) {
                 downloadLayout.setProgress(progress)
             }
@@ -320,37 +298,14 @@ class FcrWhiteboardControlComponent : FcrBaseComponent {
     }
 
     private fun syncBoardBackground(color: Int, onSync: (Boolean) -> Unit) {
-        boardRoomControl.setBoardBackground(toRGBString(color), object : ForgeCallback<Void?> {
-            override fun onSuccess(res: Void?) {
-                onSync(true)
-            }
-
-            override fun onFailure(error: ForgeError) {
-                onSync(false)
-            }
-        })
+        whiteboardApp?.setBackgroundColor(color)
+        onSync(true)
     }
 
     private fun setBoardBackgroundColor(color: Int) {
-        boardMainView?.setBackgroundColor(color)
-
+        whiteboardApp?.setBackgroundColor(color)
         drawConfig = drawConfig.copy(backgroundColor = color)
         updateDrawSettings()
-    }
-
-    private fun fromRGBString(rgb: String?): Int {
-        return runCatching {
-            Color.parseColor(rgb)
-        }.getOrElse {
-            ContextCompat.getColor(context, R.color.fcr_whiteboard_bg_white)
-        }
-    }
-
-    private fun toRGBString(@ColorInt color: Int): String {
-        val r = String.format("%02x", Color.red(color))
-        val g = String.format("%02x", Color.green(color))
-        val b = String.format("%02x", Color.blue(color))
-        return "#$r$g$b"
     }
 
     private fun setBgPickLayoutVisible(visible: Boolean) {
@@ -420,15 +375,13 @@ class FcrWhiteboardControlComponent : FcrBaseComponent {
     }
 
     private fun setStrokeColor(color: Int) {
-        boardMainView?.setStokeColor(color)
-
+        whiteboardApp?.setStrokeColor(color)
         drawConfig = drawConfig.copy(strokeColor = color)
         updateDrawSettings()
     }
 
     private fun setStrokeWidth(width: Int) {
-        boardMainView?.setStokeWidth(width)
-
+        whiteboardApp?.setStrokeWidth(width.toFloat())
         drawConfig = drawConfig.copy(strokeWidth = width)
         updateDrawSettings()
     }
@@ -438,7 +391,7 @@ class FcrWhiteboardControlComponent : FcrBaseComponent {
             showToolBoxToast(toolType.toastResId())
         }
 
-        boardMainView?.setToolType(toolType)
+        whiteboardApp?.setCurrentTool(toWhiteboardToolType(toolType))
         drawConfig = drawConfig.copy(toolType = toolType)
         updateDrawSettings()
     }
@@ -513,24 +466,12 @@ class FcrWhiteboardControlComponent : FcrBaseComponent {
         ).forEach { it.setSelectionType(type) }
     }
 
-    private fun setBoardView(boardMainView: BoardMainWindow?) {
-        this.boardMainView = boardMainView
-        syncBoardViewState()
-        updateDrawSettings()
-    }
-
     private fun syncBoardViewState() {
-        // FIXME: 2024/09/23
-        boardMainView?.run {
-            if (getOperationPrivilege()) {
-                setStokeColor(drawConfig.strokeColor)
-                setStokeWidth(drawConfig.strokeWidth)
-                setToolType(drawConfig.toolType)
-                setTextSize(32)
-            }
-            // setBackgroundColor(drawConfig.backgroundColor)
-        } ?: run {
-            Log.e("Room", "[INFO:CONSOLE] BoardMainView is null")
+        whiteboardApp?.run {
+            setStrokeColor(drawConfig.strokeColor)
+            setStrokeWidth(drawConfig.strokeWidth.toFloat())
+            setCurrentTool(toWhiteboardToolType(drawConfig.toolType))
+            setFontSize(32f)
         }
     }
 
@@ -557,4 +498,57 @@ class FcrWhiteboardControlComponent : FcrBaseComponent {
             }
         }
     }
+
+    private suspend fun getSceneSnapshotImage(index: Int): Bitmap = suspendCoroutine { cont ->
+        whiteboardApp?.rasterize(index, object : RoomCallback<Bitmap> {
+            override fun onSuccess(result: Bitmap) {
+                cont.resume(result)
+            }
+
+            override fun onFailure(error: RoomError) {
+                cont.resumeWithException(error)
+            }
+        })
+    }
+
+    private fun getAllWindowsSnapshotImageList(callback: ForgeProgressCallback<Array<Bitmap>>) {
+        whiteboardApp?.indexedNavigation?.pageCount(object : RoomCallback<Int> {
+            override fun onSuccess(count: Int) {
+                mainScope.launch {
+                    try {
+                        val bitmaps = mutableListOf<Bitmap>()
+                        for (index in 0 until count) {
+                            val bitmap = getSceneSnapshotImage(index)
+                            bitmaps.add(bitmap)
+                            callback.onProgress((index + 1) * 100 / count)
+                        }
+                        callback.onSuccess(bitmaps.toTypedArray())
+                    } catch (e: Exception) {
+                        callback.onFailure(ForgeError(message = e.message))
+                    }
+                }
+            }
+
+            override fun onFailure(error: RoomError) {
+                callback.onFailure(ForgeError(message = error.message))
+            }
+        })
+    }
+
+    private fun toWhiteboardToolType(type: ToolType): WhiteboardToolType =
+        when (type) {
+            ToolType.SELECTOR -> WhiteboardToolType.SELECTOR
+            ToolType.LASER_POINTER -> WhiteboardToolType.LASER
+            ToolType.ERASER -> WhiteboardToolType.ERASER
+            ToolType.CURVE -> WhiteboardToolType.CURVE
+            ToolType.STRAIGHT -> WhiteboardToolType.LINE
+            ToolType.ARROW -> WhiteboardToolType.ARROW
+            ToolType.RECTANGLE -> WhiteboardToolType.RECTANGLE
+            ToolType.ELLIPSE -> WhiteboardToolType.ELLIPSE
+            ToolType.TRIANGLE -> WhiteboardToolType.TRIANGLE
+            ToolType.TEXT -> WhiteboardToolType.TEXT
+            ToolType.HAND -> WhiteboardToolType.GRAB
+            ToolType.CLICKER -> WhiteboardToolType.POINTER
+            else -> WhiteboardToolType.CURVE
+        }
 }

@@ -3,7 +3,7 @@ package io.agora.board.forge.ui.component
 import android.content.Context
 import androidx.core.content.ContextCompat
 import io.agora.board.forge.ui.R
-import io.agora.board.forge.ui.contract.model.ToolType
+import io.agora.board.forge.ui.model.model.ToolType
 
 /**
  * author : fenglibin

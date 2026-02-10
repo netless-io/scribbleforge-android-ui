@@ -1,0 +1,105 @@
+package io.agora.board.forge.ui.api
+
+import android.widget.FrameLayout
+import io.agora.board.forge.ApplicationListener
+import io.agora.board.forge.Room
+import io.agora.board.forge.RoomCallback
+import io.agora.board.forge.RoomError
+import io.agora.board.forge.ui.component.WhiteboardContainer
+import io.agora.board.forge.ui.component.WhiteboardControlLayout
+import io.agora.board.forge.whiteboard.WhiteboardApplication
+
+class WhiteboardController(
+    private val container: FrameLayout,
+    private val config: WhiteboardControllerConfig,
+) {
+    private var room: Room? = null
+    private var whiteboardApp: WhiteboardApplication? = null
+    private var whiteboardContainer: WhiteboardContainer? = null
+    private var whiteboardControlLayout: WhiteboardControlLayout? = null
+    private var started: Boolean = false
+
+    private val appListener = object : ApplicationListener {
+        override fun onAppLaunch(appId: String) {
+            if (appId == config.appId) {
+                handleAppLaunch()
+            }
+        }
+
+        override fun onAppTerminate(appId: String) {
+            if (appId == config.appId) {
+                handleAppTerminate()
+            }
+        }
+    }
+
+    init {
+        whiteboardContainer = WhiteboardContainer(container.context)
+        whiteboardControlLayout = whiteboardContainer!!.controlLayout
+        container.addView(
+            whiteboardContainer,
+            FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+            )
+        )
+    }
+
+    fun start(room: Room, selfJoin: Boolean = false) {
+        if (started) return
+        started = true
+        this.room = room
+        room.addAppListener(appListener)
+
+        if (selfJoin) {
+            launchWhiteboardApp()
+            return
+        } else {
+            room.joinRoom(object : RoomCallback<Boolean> {
+                override fun onFailure(error: RoomError) {
+
+                }
+
+                override fun onSuccess(result: Boolean) {
+                    launchWhiteboardApp()
+                }
+            })
+        }
+    }
+
+    fun stop() {
+        if (!started) return
+        started = false
+
+        cleanup()
+
+        room?.removeAppListener(appListener)
+        room?.leaveRoom()
+    }
+
+    private fun launchWhiteboardApp() {
+        room?.launchApp(
+            type = WhiteboardApplication.TYPE,
+            appId = config.appId,
+            option = config.whiteboardOption
+        )
+    }
+
+    private fun handleAppLaunch() {
+        val app = room?.getApp(config.appId) as? WhiteboardApplication ?: return
+        whiteboardApp = app
+        whiteboardContainer?.addWhiteboardView(app.getView()!!)
+        whiteboardControlLayout?.attachWhiteboard(app)
+    }
+
+    private fun handleAppTerminate() {
+        cleanup()
+    }
+
+    private fun cleanup() {
+        whiteboardControlLayout?.detachWhiteboard()
+        whiteboardControlLayout = null
+        whiteboardApp = null
+        container.removeAllViews()
+    }
+}

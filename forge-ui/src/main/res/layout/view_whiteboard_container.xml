@@ -1,0 +1,12 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <FrameLayout
+        android:id="@+id/whiteboard_view_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <io.agora.board.forge.ui.component.WhiteboardControlLayout
+        android:id="@+id/whiteboard_control_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</merge>
