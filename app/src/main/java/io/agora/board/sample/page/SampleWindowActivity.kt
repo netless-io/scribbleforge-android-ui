@@ -1,8 +1,9 @@
-package io.agora.board.sample.page.app
+package io.agora.board.sample.page
 
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
+import android.view.LayoutInflater
 import androidx.lifecycle.lifecycleScope
 import io.agora.board.forge.ApplicationListener
 import io.agora.board.forge.Room
@@ -25,7 +26,6 @@ import io.agora.board.forge.windowmanager.WindowManagerOption
 import io.agora.board.sample.Constants
 import io.agora.board.sample.ForgeTestConstants
 import io.agora.board.sample.component.WhiteboardElementSelectionManager
-import io.agora.board.sample.page.BaseActivity
 import io.agora.board.sample.util.KvStore
 import io.agora.board.sample.util.RtmHelper
 import io.agora.board.sample.util.addFullView
@@ -36,7 +36,7 @@ import kotlinx.coroutines.launch
 /**
  * 窗口管理器示例
  */
-class SampleWindowActivity : BaseActivity() {
+class SampleWindowActivity : BaseActivity<ActivitySampleWindowBinding>() {
     companion object {
         private const val MAIN_WHITEBOARD_ID = "MainWhiteboard"
 
@@ -44,8 +44,6 @@ class SampleWindowActivity : BaseActivity() {
         private const val WHITEBOARD_ID = "Whiteboard"
         private const val IMAGERYDOC_ID = "ImageryDoc"
     }
-
-    private val binding: ActivitySampleWindowBinding by lazy { ActivitySampleWindowBinding.inflate(layoutInflater) }
 
     private var rtmHelper: RtmHelper = RtmHelper()
 
@@ -65,11 +63,10 @@ class SampleWindowActivity : BaseActivity() {
         }
     }
 
+    override fun inflateBinding(inflater: LayoutInflater) = ActivitySampleWindowBinding.inflate(layoutInflater)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(binding.root)
-        supportActionBar?.hide()
-        lockLandscape()
 
         binding.launchWhiteboard.setOnClickListener {
             room?.launchApp(

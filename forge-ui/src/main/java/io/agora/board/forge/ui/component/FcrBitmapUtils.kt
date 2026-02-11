@@ -12,7 +12,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
-import io.agora.board.forge.ui.internal.util.Logger
+import io.agora.board.forge.ui.internal.util.ForgeUiLogger
 import java.io.File
 import java.io.FileNotFoundException
 
@@ -72,7 +72,7 @@ object FcrBitmapUtils {
                 SUCCESS
             }
         } catch (e: FileNotFoundException) {
-            Logger.e(TAG, "保存到相册失败", e)
+            ForgeUiLogger.e(TAG, "保存到相册失败", e)
             ERROR_FILE_NOT_FOUND
         }
     }
@@ -96,7 +96,7 @@ object FcrBitmapUtils {
                 }
             } ?: ERROR_OPEN_OUTPUT_STREAM_FAILED
         } catch (e: Exception) {
-            Logger.e(TAG, "保存到相册失败")
+            ForgeUiLogger.e(TAG, "保存到相册失败")
             ERROR_EXCEPTION
         }
     }

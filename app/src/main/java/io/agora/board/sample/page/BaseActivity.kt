@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.pm.ActivityInfo
 import android.view.LayoutInflater
-import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
@@ -12,9 +11,23 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.viewbinding.ViewBinding
 import io.agora.board.forge.sample.R
 
-open class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
+    protected lateinit var binding: VB
+        private set
+
+    abstract fun inflateBinding(inflater: LayoutInflater): VB
+
+    override fun onCreate(savedInstanceState: android.os.Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = inflateBinding(layoutInflater)
+        setContentView(binding.root)
+
+        supportActionBar?.hide()
+    }
+
     private var loadingDialog: Dialog? = null
 
     override fun onResume() {
@@ -55,9 +68,9 @@ open class BaseActivity : AppCompatActivity() {
         messageTextView.text = message
 
         loadingDialog = AlertDialog.Builder(this).setView(dialogView).setCancelable(cancelable).create().apply {
-                window?.setBackgroundDrawableResource(android.R.color.transparent)
-                show()
-            }
+            window?.setBackgroundDrawableResource(android.R.color.transparent)
+            show()
+        }
     }
 
     protected fun hideLoadingDialog() {

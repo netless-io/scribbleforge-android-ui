@@ -1,6 +1,7 @@
-package io.agora.board.sample.page.app
+package io.agora.board.sample.page
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import io.agora.board.forge.Room
 import io.agora.board.forge.RoomOptions
 import io.agora.board.forge.common.dev.FakeSocketProvider
@@ -8,19 +9,17 @@ import io.agora.board.forge.sample.databinding.ActivityWhiteboardUiBinding
 import io.agora.board.forge.ui.api.WhiteboardController
 import io.agora.board.forge.ui.api.WhiteboardControllerConfig
 import io.agora.board.sample.Constants
-import io.agora.board.sample.page.BaseActivity
 
 /**
  * whiteboard ui activity
  */
-class WhiteboardUIActivity : BaseActivity() {
-    internal val binding by lazy { ActivityWhiteboardUiBinding.inflate(layoutInflater) }
+class WhiteboardUIActivity : BaseActivity<ActivityWhiteboardUiBinding>() {
     private lateinit var whiteboardController: WhiteboardController
+
+    override fun inflateBinding(inflater: LayoutInflater) = ActivityWhiteboardUiBinding.inflate(inflater)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(binding.root)
-        supportActionBar?.hide()
 
         val roomOptions = RoomOptions(
             context = this,

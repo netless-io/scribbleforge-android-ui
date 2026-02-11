@@ -2,6 +2,7 @@ package io.agora.board.forge.ui.api
 
 import android.widget.FrameLayout
 import io.agora.board.forge.ApplicationListener
+import io.agora.board.forge.Logger
 import io.agora.board.forge.Room
 import io.agora.board.forge.RoomCallback
 import io.agora.board.forge.RoomError
@@ -56,12 +57,11 @@ class WhiteboardController(
             return
         } else {
             room.joinRoom(object : RoomCallback<Boolean> {
-                override fun onFailure(error: RoomError) {
-
-                }
-
                 override fun onSuccess(result: Boolean) {
                     launchWhiteboardApp()
+                }
+
+                override fun onFailure(error: RoomError) {
                 }
             })
         }

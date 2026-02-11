@@ -178,15 +178,6 @@
             android:layout_gravity="center"
             android:text="白板UI"
             android:textAllCaps="false" />
-
-
-        <Button
-            android:id="@+id/btnMore"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="更多"
-            android:textAllCaps="false" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

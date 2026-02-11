@@ -42,7 +42,7 @@
             android:exported="true" />
 
         <activity
-            android:name="io.agora.board.sample.page.app.SampleWindowActivity"
+            android:name="io.agora.board.sample.page.SampleWindowActivity"
             android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboardHidden"
             android:exported="true" />
         <activity
@@ -58,7 +58,7 @@
             android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboardHidden"
             android:exported="false" />
         <activity
-            android:name="io.agora.board.sample.page.app.WhiteboardUIActivity"
+            android:name="io.agora.board.sample.page.WhiteboardUIActivity"
             android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboardHidden"
             android:exported="false" />
         <activity
