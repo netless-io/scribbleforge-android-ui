@@ -2,12 +2,12 @@ package io.agora.board.forge.ui.api
 
 import android.widget.FrameLayout
 import io.agora.board.forge.ApplicationListener
-import io.agora.board.forge.Logger
 import io.agora.board.forge.Room
 import io.agora.board.forge.RoomCallback
 import io.agora.board.forge.RoomError
 import io.agora.board.forge.ui.component.WhiteboardContainer
 import io.agora.board.forge.ui.component.WhiteboardControlLayout
+import io.agora.board.forge.ui.internal.util.addMatchParent
 import io.agora.board.forge.whiteboard.WhiteboardApplication
 
 class WhiteboardController(
@@ -35,15 +35,9 @@ class WhiteboardController(
     }
 
     init {
-        whiteboardContainer = WhiteboardContainer(container.context)
-        whiteboardControlLayout = whiteboardContainer!!.controlLayout
-        container.addView(
-            whiteboardContainer,
-            FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.MATCH_PARENT
-            )
-        )
+        whiteboardContainer = WhiteboardContainer(container.context).also {
+            whiteboardControlLayout = it.controlLayout
+        }
     }
 
     fun start(room: Room, selfJoin: Boolean = false) {
@@ -79,9 +73,7 @@ class WhiteboardController(
 
     private fun launchWhiteboardApp() {
         room?.launchApp(
-            type = WhiteboardApplication.TYPE,
-            appId = config.appId,
-            option = config.whiteboardOption
+            type = WhiteboardApplication.TYPE, appId = config.appId, option = config.whiteboardOption
         )
     }
 
@@ -90,6 +82,7 @@ class WhiteboardController(
         whiteboardApp = app
         whiteboardContainer?.addWhiteboardView(app.getView()!!)
         whiteboardControlLayout?.attachWhiteboard(app)
+        container.addMatchParent((whiteboardContainer))
     }
 
     private fun handleAppTerminate() {
@@ -97,9 +90,9 @@ class WhiteboardController(
     }
 
     private fun cleanup() {
+        container.removeView(whiteboardContainer)
         whiteboardControlLayout?.detachWhiteboard()
         whiteboardControlLayout = null
         whiteboardApp = null
-        container.removeAllViews()
     }
 }

@@ -1,8 +1,10 @@
-package io.agora.board.forge.ui.component
+package io.agora.board.forge.ui.internal.util
 
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.ProgressBar
 import androidx.core.view.isVisible
 
 fun View.animateHide(animationResId: Int) {
@@ -37,4 +39,23 @@ fun View.animateShow(animationResId: Int) {
         override fun onAnimationRepeat(animation: Animation) {}
     })
     this.startAnimation(animation)
+}
+
+fun ViewGroup.addMatchParent(view: View?) {
+    addView(
+        view,
+        ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
+    )
+}
+
+
+fun ProgressBar.setProgressCompat(progress: Int, animated: Boolean) {
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+        this.setProgress(progress, animated)
+    } else {
+        this.progress = progress
+    }
 }

@@ -14,6 +14,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GestureDetectorCompat
 import io.agora.board.forge.ui.R
 import io.agora.board.forge.ui.databinding.FcrBoardSceneDownloadingLayoutBinding
+import io.agora.board.forge.ui.internal.util.animateHide
+import io.agora.board.forge.ui.internal.util.animateShow
+import io.agora.board.forge.ui.internal.util.setProgressCompat
 
 /**
  * author : fenglibin
@@ -33,14 +36,14 @@ class FcrBoardDownloadingLayout @JvmOverloads constructor(
         binding.tvDownloadingProgress.text = context.getString(
             R.string.fcr_board_scene_downloading_progress, progress.toString()
         )
-        binding.pbProgress.setProgress(progress, true)
+        binding.pbProgress.setProgressCompat(progress, true)
     }
 
     fun setDownloadState(state: FcrBoardUiDownloadingState) {
         when (state) {
             FcrBoardUiDownloadingState.DOWNLOADING -> {
                 binding.tvDownloading.text = context.getString(R.string.fcr_board_scene_downloading)
-                binding.pbProgress.setProgress(0, false)
+                binding.pbProgress.setProgressCompat(0, false)
                 binding.pbProgress.setTint(R.color.fcr_ui_scene_ramp_brand6, R.color.fcr_ui_scene_ramp_brand1)
                 binding.ivIcon.setTint(R.color.fcr_ui_scene_icontext1)
             }

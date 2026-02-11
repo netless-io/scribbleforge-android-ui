@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.agora.board.forge.ui.databinding.FcrBoardToolBoxItemBinding
+import io.agora.board.forge.ui.component.state.DrawState
 
 /**
  * author : fenglibin
@@ -14,7 +15,7 @@ import io.agora.board.forge.ui.databinding.FcrBoardToolBoxItemBinding
 class FcrBoardToolBoxAdapter(private var itemList: List<ToolBoxItem>) :
     RecyclerView.Adapter<FcrBoardToolBoxAdapter.ViewHolder>() {
 
-    private var drawConfig: FcrBoardUiDrawConfig? = null
+    private var drawState: DrawState? = null
     private var onItemClickListener: OnItemClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -30,7 +31,7 @@ class FcrBoardToolBoxAdapter(private var itemList: List<ToolBoxItem>) :
             binding.ivIcon.setImageResource(item.iconResId)
             binding.ivIcon.visibility = View.VISIBLE
             binding.flStroke.visibility = View.VISIBLE
-            drawConfig?.let {
+            drawState?.let {
                 binding.strokeDot.setDotColor(it.strokeColor)
                 binding.strokeDot.setDotSize(it.strokeWidth.toFloat())
             }
@@ -68,8 +69,8 @@ class FcrBoardToolBoxAdapter(private var itemList: List<ToolBoxItem>) :
         onItemClickListener = listener
     }
 
-    fun setDrawConfig(drawConfig: FcrBoardUiDrawConfig) {
-        this.drawConfig = drawConfig
+    fun setDrawConfig(drawState: DrawState) {
+        this.drawState = drawState
         notifyDataSetChanged()
     }
 

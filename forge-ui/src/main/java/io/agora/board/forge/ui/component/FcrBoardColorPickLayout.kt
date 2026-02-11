@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
 import io.agora.board.forge.ui.R
 import io.agora.board.forge.ui.databinding.FcrBoardColorPickComponentBinding
+import io.agora.board.forge.ui.component.state.DrawState
 
 /**
  * author : fenglibin
@@ -125,13 +126,13 @@ class FcrBoardColorPickLayout @JvmOverloads constructor(
         this.onStrokeSettingListener = listener
     }
 
-    fun setDrawConfig(drawConfig: FcrBoardUiDrawConfig) {
+    fun setDrawConfig(drawState: DrawState) {
         dots.forEachIndexed { index, fcrBoardDotView ->
-            fcrBoardDotView.isSelected = dotData[index] == drawConfig.strokeWidth
+            fcrBoardDotView.isSelected = dotData[index] == drawState.strokeWidth
         }
 
         colors.forEachIndexed { index, imageView ->
-            imageView.isSelected = colorData[index] == drawConfig.strokeColor
+            imageView.isSelected = colorData[index] == drawState.strokeColor
         }
     }
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Device Detection -->
-    <bool name="isTablet">false</bool>
+    <bool name="fui_isTablet">false</bool>
 
     <!-- System Dimensions -->
     <dimen name="forge_system_status_bar_height">25dp</dimen>

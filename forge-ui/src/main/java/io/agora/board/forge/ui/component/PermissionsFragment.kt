@@ -17,7 +17,7 @@ import java.lang.ref.WeakReference
  * date : 2024/8/5
  * description : 权限申请 fragment
  */
-class FcrPermissionsFragment : Fragment() {
+internal class PermissionsFragment : Fragment() {
 
     private lateinit var permissionsRequired: Array<String>
 
@@ -62,7 +62,7 @@ class FcrPermissionsFragment : Fragment() {
             onGranted: () -> Unit,
             onDenied: () -> Unit,
         ) {
-            val fragment = FcrPermissionsFragment()
+            val fragment = PermissionsFragment()
             fragment.permissionsRequired = permissions
             fragment.onGranted = onGranted
             fragment.onDenied = onDenied
@@ -77,7 +77,6 @@ class FcrPermissionsFragment : Fragment() {
             context, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         )
 
-        // 用于存储图片时的权限申请
         fun showSaveImagePermission(
             activity: FragmentActivity,
             onGranted: () -> Unit,

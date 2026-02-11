@@ -1,7 +1,5 @@
-package io.agora.board.forge.ui.component
+package io.agora.board.forge.ui.model
 
-import android.content.Context
-import androidx.core.content.ContextCompat
 import io.agora.board.forge.ui.R
 import io.agora.board.forge.ui.model.model.ToolType
 
@@ -43,39 +41,3 @@ fun ToolType.toastResId() = when (this) {
     ToolType.ELLIPSE -> R.string.fcr_board_toast_circle
     ToolType.HAND -> R.string.fcr_board_toast_hand
 }
-
-data class FcrBoardUiDrawConfig(
-    val toolType: ToolType,
-    val strokeWidth: Int,
-    val strokeColor: Int,
-    val backgroundColor: Int,
-)
-
-class FcrBoardUiLayoutShownData(
-    var strokeShown: Boolean = false,
-    var toolShown: Boolean = false,
-    var downloadShown: Boolean = false,
-    var bgPickShown: Boolean = false
-)
-
-val strokeColors = listOf(
-    R.color.fcr_whiteboard_color_blue,
-    R.color.fcr_whiteboard_color_purple,
-    R.color.fcr_whiteboard_color_red,
-    R.color.fcr_whiteboard_color_green,
-    R.color.fcr_whiteboard_color_yellow,
-)
-
-val strokeIndex: Int
-    get() {
-        // TODO
-        // return Constants.currentUser.userId.hashCode() and Int.MAX_VALUE % strokeColors.size
-        return 0
-    }
-
-fun defaultDrawConfig(context: Context) = FcrBoardUiDrawConfig(
-    toolType = ToolType.CURVE,
-    strokeWidth = 4,
-    strokeColor = ContextCompat.getColor(context, strokeColors[strokeIndex]),
-    backgroundColor = ContextCompat.getColor(context, R.color.fcr_whiteboard_bg_white),
-)

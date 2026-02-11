@@ -1,4 +1,4 @@
-package io.agora.board.forge.ui.component
+package io.agora.board.forge.ui.internal.util
 
 import android.content.Context
 import android.content.res.Configuration
@@ -39,12 +39,12 @@ enum class FcrDeviceOrientation {
     }
 }
 
-object FcrFoundationUtils {
+internal object FcrFoundationUtils {
     /**
      * 是否是平板设备
      */
     fun isTablet(context: Context): Boolean {
-        return context.resources.getBoolean(R.bool.isTablet)
+        return context.resources.getBoolean(R.bool.fui_isTablet)
     }
 
     /**
@@ -52,12 +52,5 @@ object FcrFoundationUtils {
      */
     fun isPortrait(context: Context): Boolean {
         return context.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
-    }
-
-    fun getStatusBarHeight(activity: Context): Int {
-        val resourceId = activity.resources.getIdentifier("status_bar_height", "dimen", "android")
-        return if (resourceId > 0) {
-            activity.resources.getDimensionPixelSize(resourceId)
-        } else activity.resources.getDimensionPixelOffset(R.dimen.fcr_system_status_bar_height)
     }
 }

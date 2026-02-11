@@ -14,7 +14,7 @@ class WhiteboardContainer @JvmOverloads constructor(
     internal val controlLayout: WhiteboardControlLayout
 
     init {
-        inflate(context, R.layout.view_whiteboard_container, this)
+        inflate(context, R.layout.fui_whiteboard_container, this)
 
         whiteboardViewContainer = findViewById(R.id.whiteboard_view_container)
         controlLayout = findViewById(R.id.whiteboard_control_layout)

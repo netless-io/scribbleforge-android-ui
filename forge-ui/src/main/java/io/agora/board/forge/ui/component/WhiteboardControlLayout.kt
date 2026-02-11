@@ -4,20 +4,29 @@ import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.animation.AnimationUtils
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import io.agora.board.forge.RoomCallback
 import io.agora.board.forge.RoomError
+import io.agora.board.forge.ui.ForgeError
+import io.agora.board.forge.ui.ForgeProgressCallback
 import io.agora.board.forge.ui.R
-import io.agora.board.forge.ui.model.model.ForgeError
-import io.agora.board.forge.ui.model.model.ForgeProgressCallback
-import io.agora.board.forge.ui.model.model.ToolType
+import io.agora.board.forge.ui.component.state.DrawState
+import io.agora.board.forge.ui.component.state.LayoutState
+import io.agora.board.forge.ui.component.state.WhiteboardStateStore
+import io.agora.board.forge.ui.component.state.WhiteboardUiAction
+import io.agora.board.forge.ui.component.state.WhiteboardUiState
 import io.agora.board.forge.ui.databinding.FcrBoardControlComponentBinding
+import io.agora.board.forge.ui.internal.util.FcrDeviceOrientation
+import io.agora.board.forge.ui.internal.util.animateHide
+import io.agora.board.forge.ui.internal.util.animateShow
+import io.agora.board.forge.ui.model.model.ToolType
+import io.agora.board.forge.ui.model.toastResId
 import io.agora.board.forge.whiteboard.SimpleWhiteboardListener
 import io.agora.board.forge.whiteboard.WhiteboardApplication
+import io.agora.board.forge.whiteboard.WhiteboardToolInfo
 import io.agora.board.forge.whiteboard.WhiteboardToolType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +34,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -38,19 +46,31 @@ class WhiteboardControlLayout @JvmOverloads constructor(
     private val mainScope = CoroutineScope(Dispatchers.Main)
 
     private val binding = FcrBoardControlComponentBinding.inflate(LayoutInflater.from(context), this, true)
-    private var whiteboardApp: WhiteboardApplication? = null
-    private var drawConfig = defaultDrawConfig(context)
-    private var layoutShownData = FcrBoardUiLayoutShownData()
 
-    private val isDownloading = AtomicBoolean(false)
     private var downloadHideJob: Job? = null
 
+    private var whiteboardApp: WhiteboardApplication? = null
+
+    private val store = WhiteboardStateStore(context)
+
     init {
+        mainScope.launch {
+            store.state.collect { state ->
+                render(state)
+            }
+        }
+
         setupToolBoxListener()
         setupStrokeSettingListener()
         setupShapePickListener()
         setupBgPickLayout()
         adjustLayoutForOrientation()
+    }
+
+    private fun render(state: WhiteboardUiState) {
+        updateDrawSettings(state.drawState)
+        updateFloatLayouts(state.layoutState)
+        updateToolboxSelection(state.layoutState)
     }
 
     private fun setupToolBoxListener() {
@@ -107,12 +127,11 @@ class WhiteboardControlLayout @JvmOverloads constructor(
             override fun onBoardBgPicked(color: Int, toast: Int) {
                 syncBoardBackground(color) { success ->
                     if (success) {
-                        FcrCenterToast.normal(context, toast)
+                        CenterToast.normal(context, toast)
                         setBoardBackgroundColor(color)
                     }
                 }
-                layoutShownData.bgPickShown = false
-                updateFloatLayouts()
+                store.dispatch(WhiteboardUiAction.HideBgPanel)
             }
         }
         listOf(
@@ -124,28 +143,31 @@ class WhiteboardControlLayout @JvmOverloads constructor(
 
     private val whiteboardListener = object : SimpleWhiteboardListener() {
         override fun onUndoStackLengthUpdate(whiteboard: WhiteboardApplication, length: Int) {
-            Log.d("WhiteboardControlLayout", "Undo stack length updated: $length")
-            listOf(
-                binding.phonePortLayout.boardToolBox,
-                binding.phoneLoadLayout.boardToolBox,
-                binding.tabletLayout.boardToolBox
-            ).forEach { it.setUndoEnabled(length > 0) }
+            store.dispatch(
+                WhiteboardUiAction.UpdateUndoRedo(
+                    undo = length > 0,
+                    redo = store.state.value.drawState.redo
+                )
+            )
         }
 
         override fun onRedoStackLengthUpdate(whiteboard: WhiteboardApplication, length: Int) {
-            Log.d("WhiteboardControlLayout", "Redo stack length updated: $length")
-            listOf(
-                binding.phonePortLayout.boardToolBox,
-                binding.phoneLoadLayout.boardToolBox,
-                binding.tabletLayout.boardToolBox
-            ).forEach { it.setRedoEnabled(length > 0) }
+            store.dispatch(
+                WhiteboardUiAction.UpdateUndoRedo(
+                    undo = store.state.value.drawState.undo,
+                    redo = length > 0
+                )
+            )
+        }
+
+        override fun onToolInfoUpdate(whiteboard: WhiteboardApplication, toolInfo: WhiteboardToolInfo) {
+            store.dispatch(WhiteboardUiAction.ChangeTool(toolInfo.tool.toToolType()))
         }
     }
 
     fun attachWhiteboard(app: WhiteboardApplication) {
         this.whiteboardApp = app
         syncBoardViewState()
-        updateDrawSettings()
         app.addListener(whiteboardListener)
     }
 
@@ -168,47 +190,29 @@ class WhiteboardControlLayout @JvmOverloads constructor(
 
     private fun onToolClick(item: ToolBoxItem) {
         if (item.tools.size > 1) {
-            if (layoutShownData.toolShown) {
-                layoutShownData.toolShown = false
+            val open = store.state.value.layoutState.toolShown
+            if (open) {
+                store.dispatch(WhiteboardUiAction.ToggleToolPanel)
             } else {
-                layoutShownData.run {
-                    toolShown = true
-                    strokeShown = false
-                    downloadShown = false
-                    bgPickShown = false
-                }
+                store.dispatch(WhiteboardUiAction.ShowToolPanel)
                 setToolType(item.tools[item.index])
             }
             binding.phonePortLayout.boardShapePickLayout.setTools(item.tools)
             binding.phoneLoadLayout.boardShapePickLayout.setTools(item.tools)
             binding.tabletLayout.boardShapePickLayout.setTools(item.tools)
         } else {
-            layoutShownData.run {
-                toolShown = false
-                strokeShown = false
-                downloadShown = false
-                bgPickShown = false
-            }
+            store.dispatch(WhiteboardUiAction.HideAllPanel)
             setToolType(item.tools[0])
         }
-
-        updateFloatLayouts()
     }
 
     private fun onColorPickClick() {
-        if (layoutShownData.strokeShown) {
-            layoutShownData.strokeShown = false
-        } else {
-            layoutShownData.run {
-                toolShown = false
-                strokeShown = true
-                downloadShown = false
-                bgPickShown = false
-            }
+        val current = store.state.value.layoutState.strokeShown
+        if (!current) {
             showToolBoxToast(R.string.fcr_board_toast_change_color)
         }
 
-        updateFloatLayouts()
+        store.dispatch(WhiteboardUiAction.ToggleStrokePanel)
     }
 
     private fun onDownloadClick() {
@@ -216,18 +220,12 @@ class WhiteboardControlLayout @JvmOverloads constructor(
     }
 
     private fun performDownload() {
-        if (!layoutShownData.downloadShown) {
-            layoutShownData.run {
-                toolShown = false
-                strokeShown = false
-                downloadShown = true
-                bgPickShown = false
-            }
-            updateFloatLayouts()
+        if (!store.state.value.layoutState.downloadShown) {
+            store.dispatch(WhiteboardUiAction.ToggleDownloadPanel)
         }
 
-        if (isDownloading.get()) return
-        isDownloading.set(true)
+        if (store.state.value.isDownloading) return
+        store.dispatch(WhiteboardUiAction.StartDownloading)
         downloadHideJob?.cancel()
 
         val downloadLayout = when (FcrDeviceOrientation.Companion.get(context)) {
@@ -255,13 +253,7 @@ class WhiteboardControlLayout @JvmOverloads constructor(
                                 downloadLayout.setDownloadState(FcrBoardUiDownloadingState.SUCCESS)
                                 downloadHideJob = launch {
                                     delay(1500)
-                                    layoutShownData.run {
-                                        toolShown = false
-                                        strokeShown = false
-                                        downloadShown = false
-                                        bgPickShown = false
-                                    }
-                                    updateFloatLayouts()
+                                    store.dispatch(WhiteboardUiAction.HideAllPanel)
                                 }
                             } else {
                                 downloadLayout.setDownloadState(FcrBoardUiDownloadingState.FAILURE)
@@ -270,31 +262,24 @@ class WhiteboardControlLayout @JvmOverloads constructor(
                     } catch (e: Exception) {
                         downloadLayout.setDownloadState(FcrBoardUiDownloadingState.FAILURE)
                     } finally {
-                        isDownloading.set(false)
+                        store.dispatch(WhiteboardUiAction.FinishDownloading)
                     }
                 }
             }
 
             override fun onFailure(error: ForgeError) {
                 downloadLayout.setDownloadState(FcrBoardUiDownloadingState.FAILURE)
-                isDownloading.set(false)
+                store.dispatch(WhiteboardUiAction.FinishDownloading)
             }
         })
     }
 
     private fun onBgPickClick() {
-        if (layoutShownData.bgPickShown) {
-            layoutShownData.bgPickShown = false
-        } else {
-            layoutShownData.run {
-                bgPickShown = true
-                toolShown = false
-                strokeShown = false
-                downloadShown = false
-            }
+        store.dispatch(WhiteboardUiAction.ToggleBgPanel)
+        val current = store.state.value.layoutState.bgPickShown
+        if (!current) {
             showToolBoxToast(R.string.fcr_board_toast_change_bg)
         }
-        updateFloatLayouts()
     }
 
     private fun syncBoardBackground(color: Int, onSync: (Boolean) -> Unit) {
@@ -304,8 +289,9 @@ class WhiteboardControlLayout @JvmOverloads constructor(
 
     private fun setBoardBackgroundColor(color: Int) {
         whiteboardApp?.setBackgroundColor(color)
-        drawConfig = drawConfig.copy(backgroundColor = color)
-        updateDrawSettings()
+        store.dispatch(
+            WhiteboardUiAction.ChangeBackground(color)
+        )
     }
 
     private fun setBgPickLayoutVisible(visible: Boolean) {
@@ -361,102 +347,107 @@ class WhiteboardControlLayout @JvmOverloads constructor(
                     }
                 }
             }
-            updateDrawSettings()
         }
 
         if (enable) {
-            FcrCenterToast.normal(context, R.string.fcr_board_toast_two_finger_move)
+            CenterToast.normal(context, R.string.fcr_board_toast_two_finger_move)
         }
     }
 
     private fun onLocalWritableChanged(writable: Boolean) {
         syncBoardViewState()
-        updateDrawSettings()
     }
 
     private fun setStrokeColor(color: Int) {
         whiteboardApp?.setStrokeColor(color)
-        drawConfig = drawConfig.copy(strokeColor = color)
-        updateDrawSettings()
+        store.dispatch(WhiteboardUiAction.ChangeStrokeColor(color))
     }
 
     private fun setStrokeWidth(width: Int) {
         whiteboardApp?.setStrokeWidth(width.toFloat())
-        drawConfig = drawConfig.copy(strokeWidth = width)
-        updateDrawSettings()
+        store.dispatch(WhiteboardUiAction.ChangeStrokeWidth(width))
     }
 
     private fun setToolType(toolType: ToolType) {
-        if (toolType != drawConfig.toolType) {
+        val current = store.state.value.drawState.toolType
+        if (toolType != current) {
             showToolBoxToast(toolType.toastResId())
         }
 
         whiteboardApp?.setCurrentTool(toWhiteboardToolType(toolType))
-        drawConfig = drawConfig.copy(toolType = toolType)
-        updateDrawSettings()
+        store.dispatch(WhiteboardUiAction.ChangeTool(toolType))
     }
 
     private fun showToolBoxToast(resId: Int) {
-        FcrCenterToast.normal(context, resId)
+        CenterToast.normal(context, resId)
     }
 
     /**
      * 更新绘制设置
      */
-    private fun updateDrawSettings() {
+    private fun updateDrawSettings(drawState: DrawState) {
         binding.phonePortLayout.run {
-            boardToolBox.setDrawConfig(drawConfig)
-            boardColorPickLayout.setDrawConfig(drawConfig)
-            boardShapePickLayout.selectTool(drawConfig.toolType)
-            boardBgPickLayout.setBoardBackgroundColor(drawConfig.backgroundColor)
+            boardToolBox.setDrawConfig(drawState)
+            boardColorPickLayout.setDrawConfig(drawState)
+            boardShapePickLayout.selectTool(drawState.toolType)
+            boardBgPickLayout.setBoardBackgroundColor(drawState.backgroundColor)
         }
 
         binding.phoneLoadLayout.run {
-            boardToolBox.setDrawConfig(drawConfig)
-            boardColorPickLayout.setDrawConfig(drawConfig)
-            boardShapePickLayout.selectTool(drawConfig.toolType)
-            boardBgPickLayout.setBoardBackgroundColor(drawConfig.backgroundColor)
+            boardToolBox.setDrawConfig(drawState)
+            boardColorPickLayout.setDrawConfig(drawState)
+            boardShapePickLayout.selectTool(drawState.toolType)
+            boardBgPickLayout.setBoardBackgroundColor(drawState.backgroundColor)
         }
 
         binding.tabletLayout.run {
-            boardToolBox.setDrawConfig(drawConfig)
-            boardColorPickLayout.setDrawConfig(drawConfig)
-            boardShapePickLayout.selectTool(drawConfig.toolType)
-            boardBgPickLayout.setBoardBackgroundColor(drawConfig.backgroundColor)
+            boardToolBox.setDrawConfig(drawState)
+            boardColorPickLayout.setDrawConfig(drawState)
+            boardShapePickLayout.selectTool(drawState.toolType)
+            boardBgPickLayout.setBoardBackgroundColor(drawState.backgroundColor)
         }
 
-        updateToolboxSelection()
+        listOf(
+            binding.phonePortLayout.boardToolBox,
+            binding.phoneLoadLayout.boardToolBox,
+            binding.tabletLayout.boardToolBox
+        ).forEach {
+            it.setUndoEnabled(drawState.undo)
+            it.setRedoEnabled(drawState.redo)
+        }
     }
 
     /**
      * 布局显示数据变更时更新浮动布局
      */
-    private fun updateFloatLayouts() {
+    private fun updateFloatLayouts(layoutState: LayoutState) {
         binding.phonePortLayout.run {
-            boardShapePickLayout.isVisible = layoutShownData.toolShown
-            boardColorPickLayout.isVisible = layoutShownData.strokeShown
+            boardShapePickLayout.isVisible = layoutState.toolShown
+            boardColorPickLayout.isVisible = layoutState.strokeShown
         }
 
         binding.phoneLoadLayout.run {
-            boardShapePickLayout.isVisible = layoutShownData.toolShown
-            boardColorPickLayout.isVisible = layoutShownData.strokeShown
+            boardShapePickLayout.isVisible = layoutState.toolShown
+            boardColorPickLayout.isVisible = layoutState.strokeShown
         }
 
         binding.tabletLayout.run {
-            boardShapePickLayout.isVisible = layoutShownData.toolShown
-            boardColorPickLayout.isVisible = layoutShownData.strokeShown
+            boardShapePickLayout.isVisible = layoutState.toolShown
+            boardColorPickLayout.isVisible = layoutState.strokeShown
         }
 
-        setDownloadLayoutVisible(layoutShownData.downloadShown)
-        setBgPickLayoutVisible(layoutShownData.bgPickShown)
-        updateToolboxSelection()
+        setDownloadLayoutVisible(layoutState.downloadShown)
+        setBgPickLayoutVisible(layoutState.bgPickShown)
     }
 
-    private fun updateToolboxSelection() {
+    /**
+     * 更新工具箱选中状态
+     */
+    private fun updateToolboxSelection(layoutState: LayoutState) {
         val type = when (true) {
-            layoutShownData.strokeShown -> FcrBoardToolBoxType.Stroke
-            layoutShownData.bgPickShown -> FcrBoardToolBoxType.Background
-            layoutShownData.downloadShown -> FcrBoardToolBoxType.Download
+            layoutState.strokeShown -> FcrBoardToolBoxType.Stroke
+            layoutState.bgPickShown -> FcrBoardToolBoxType.Background
+            layoutState.downloadShown -> FcrBoardToolBoxType.Download
             else -> FcrBoardToolBoxType.Tool
         }
         listOf(
@@ -467,12 +458,11 @@ class WhiteboardControlLayout @JvmOverloads constructor(
     }
 
     private fun syncBoardViewState() {
-        whiteboardApp?.run {
-            setStrokeColor(drawConfig.strokeColor)
-            setStrokeWidth(drawConfig.strokeWidth.toFloat())
-            setCurrentTool(toWhiteboardToolType(drawConfig.toolType))
-            setFontSize(32f)
-        }
+        val current = store.state.value.drawState
+        setStrokeColor(current.strokeColor)
+        setStrokeWidth(current.strokeWidth)
+        setToolType(current.toolType)
+        whiteboardApp?.setFontSize(32f)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration?) {
@@ -551,4 +541,20 @@ class WhiteboardControlLayout @JvmOverloads constructor(
             ToolType.CLICKER -> WhiteboardToolType.POINTER
             else -> WhiteboardToolType.CURVE
         }
+
+    fun WhiteboardToolType?.toToolType() = when (this) {
+        WhiteboardToolType.CURVE -> ToolType.CURVE
+        WhiteboardToolType.RECTANGLE -> ToolType.RECTANGLE
+        WhiteboardToolType.SELECTOR -> ToolType.SELECTOR
+        WhiteboardToolType.LINE -> ToolType.STRAIGHT
+        WhiteboardToolType.ARROW -> ToolType.ARROW
+        WhiteboardToolType.TEXT -> ToolType.TEXT
+        WhiteboardToolType.ELLIPSE -> ToolType.ELLIPSE
+        WhiteboardToolType.TRIANGLE -> ToolType.TRIANGLE
+        WhiteboardToolType.ERASER -> ToolType.ERASER
+        WhiteboardToolType.LASER -> ToolType.LASER_POINTER
+        WhiteboardToolType.GRAB -> ToolType.HAND
+        WhiteboardToolType.POINTER -> ToolType.CLICKER
+        else -> ToolType.CURVE
+    }
 }
