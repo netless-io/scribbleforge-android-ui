@@ -22,7 +22,7 @@ import io.agora.board.forge.ui.databinding.FcrBoardControlComponentBinding
 import io.agora.board.forge.ui.internal.util.FcrDeviceOrientation
 import io.agora.board.forge.ui.internal.util.animateHide
 import io.agora.board.forge.ui.internal.util.animateShow
-import io.agora.board.forge.ui.model.model.ToolType
+import io.agora.board.forge.ui.model.ToolType
 import io.agora.board.forge.ui.model.toastResId
 import io.agora.board.forge.whiteboard.SimpleWhiteboardListener
 import io.agora.board.forge.whiteboard.WhiteboardApplication
@@ -127,7 +127,7 @@ class WhiteboardControlLayout @JvmOverloads constructor(
             override fun onBoardBgPicked(color: Int, toast: Int) {
                 syncBoardBackground(color) { success ->
                     if (success) {
-                        CenterToast.normal(context, toast)
+                        FcrToast.normal(context, toast)
                         setBoardBackgroundColor(color)
                     }
                 }
@@ -166,9 +166,9 @@ class WhiteboardControlLayout @JvmOverloads constructor(
     }
 
     fun attachWhiteboard(app: WhiteboardApplication) {
-        this.whiteboardApp = app
+        whiteboardApp = app
+        whiteboardApp?.addListener(whiteboardListener)
         syncBoardViewState()
-        app.addListener(whiteboardListener)
     }
 
     fun detachWhiteboard() {
@@ -244,16 +244,16 @@ class WhiteboardControlLayout @JvmOverloads constructor(
                 mainScope.launch {
                     try {
                         val bitmap = withContext(Dispatchers.IO) {
-                            FcrBitmapUtils.combineBitmapsVertically(res.toList())
+                            BitmapUtils.combineBitmapsVertically(res.toList())
                         }
                         bitmap?.let {
                             val imageName = "board_${System.currentTimeMillis()}"
-                            val result = FcrBitmapUtils.saveToGallery(context, it, imageName)
-                            if (result == FcrBitmapUtils.SUCCESS) {
+                            val result = BitmapUtils.saveToGallery(context, it, imageName)
+                            if (result == BitmapUtils.SUCCESS) {
                                 downloadLayout.setDownloadState(FcrBoardUiDownloadingState.SUCCESS)
                                 downloadHideJob = launch {
                                     delay(1500)
-                                    store.dispatch(WhiteboardUiAction.HideAllPanel)
+                                    store.dispatch(WhiteboardUiAction.HideDownloadPanel)
                                 }
                             } else {
                                 downloadLayout.setDownloadState(FcrBoardUiDownloadingState.FAILURE)
@@ -350,7 +350,7 @@ class WhiteboardControlLayout @JvmOverloads constructor(
         }
 
         if (enable) {
-            CenterToast.normal(context, R.string.fcr_board_toast_two_finger_move)
+            FcrToast.normal(context, R.string.fcr_board_toast_two_finger_move)
         }
     }
 
@@ -379,7 +379,7 @@ class WhiteboardControlLayout @JvmOverloads constructor(
     }
 
     private fun showToolBoxToast(resId: Int) {
-        CenterToast.normal(context, resId)
+        FcrToast.normal(context, resId)
     }
 
     /**
@@ -405,15 +405,6 @@ class WhiteboardControlLayout @JvmOverloads constructor(
             boardColorPickLayout.setDrawConfig(drawState)
             boardShapePickLayout.selectTool(drawState.toolType)
             boardBgPickLayout.setBoardBackgroundColor(drawState.backgroundColor)
-        }
-
-        listOf(
-            binding.phonePortLayout.boardToolBox,
-            binding.phoneLoadLayout.boardToolBox,
-            binding.tabletLayout.boardToolBox
-        ).forEach {
-            it.setUndoEnabled(drawState.undo)
-            it.setRedoEnabled(drawState.redo)
         }
     }
 

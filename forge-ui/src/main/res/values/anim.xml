@@ -1,0 +1,3 @@
+<resources>
+    <integer name="fcr_animator_duration_short">250</integer>
+</resources>

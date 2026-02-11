@@ -1,8 +1,6 @@
 <resources>
     <!-- common: generally a noun or verb with a real meaning -->
 
-    <!-- cross module -->
-
     <!-- board module -->
     <string name="fcr_board_status_bar_exit">退出绘制</string>
     <string name="fcr_board_scene_downloading">板书正在下载中…</string>
@@ -41,9 +39,4 @@
     <string name="fcr_board_toast_stop_share_failed">停止白板共享失败</string>
     <string name="fcr_board_toast_start_share_failed">开启白板共享失败</string>
     <string name="fcr_board_toast_download_permission_denied">下载板书需要存储权限</string>
-    <string name="fcr_board_toast_share_stopped">共享已停止</string>
-    <string name="fcr_board_dialog_share_stopped_title">你的共享被停止</string>
-    <string name="fcr_board_dialog_share_stopped_message_host">主持人{%1$s}已停止您的共享</string>
-    <string name="fcr_board_dialog_share_stopped_message_cohost">联合主持人{%1$s}已停止你的共享</string>
-    <string name="fcr_board_dialog_share_stopped_message_ok">知道了</string>
 </resources>

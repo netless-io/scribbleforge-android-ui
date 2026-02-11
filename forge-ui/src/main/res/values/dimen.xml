@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Device Detection -->
+    <bool name="fui_isTablet">false</bool>
+
+    <!-- System Dimensions -->
+    <dimen name="forge_system_status_bar_height">25dp</dimen>
+
+    <!-- Board Toolbar -->
+
+    <!-- Stroke Settings -->
+
+    <!-- Picker -->
+
+    <!-- Dividers -->
+
+    <!-- Common -->
+    <dimen name="fcr_cornerradius_xxxl">24dp</dimen>
+    <dimen name="fcr_cornerradius_l">12dp</dimen>
+    <dimen name="fcr_cornerradius_xxs">4dp</dimen>
+    <dimen name="fcr_cornerradius_m">10dp</dimen>
+    <dimen name="fcr_cornerradius_round">9999dp</dimen>
+    <dimen name="fcr_cornerradius_xxxs">3dp</dimen>
+    <dimen name="fcr_cornerradius_xl">16dp</dimen>
+    <dimen name="fcr_cornerradius_s">8dp</dimen>
+    <dimen name="fcr_cornerradius_xxl">20dp</dimen>
+    <dimen name="fcr_cornerradius_xs">6dp</dimen>
+    <dimen name="fcr_cornerradius_xxxxs">2dp</dimen>
+    <dimen name="fcr_cornerradius_xxxxl">40dp</dimen>
+
+    <!-- common -->
+    <dimen name="fcr_v_divider_thin">0.5dp</dimen>
+    <dimen name="fcr_v_divider_normal">1dp</dimen>
+
+    <dimen name="fcr_bars_text_10sp">10sp</dimen>
+    <dimen name="fcr_bars_text_12sp">12sp</dimen>
+    <dimen name="fcr_bars_text_14sp">14sp</dimen>
+    <dimen name="fcr_bars_text_15sp">15sp</dimen>
+
+    <dimen name="fcr_bars_regular_0">0dp</dimen>
+    <dimen name="fcr_bars_regular_2">2dp</dimen>
+    <dimen name="fcr_bars_regular_4">4dp</dimen>
+    <dimen name="fcr_bars_regular_6">6dp</dimen>
+    <dimen name="fcr_bars_regular_8">8dp</dimen>
+    <dimen name="fcr_bars_regular_18">18dp</dimen>
+    <dimen name="fcr_bars_regular_24">24dp</dimen>
+    <dimen name="fcr_bars_regular_26">26dp</dimen>
+
+    <dimen name="fcr_system_status_bar_height">25dp</dimen>
+    <dimen name="fcr_bottom_bar_height">70dp</dimen>
+    <dimen name="fcr_status_bar_height">44dp</dimen>
+
+    <dimen name="fcr_board_icon_width">32dp</dimen>
+    <dimen name="fcr_board_icon_height">32dp</dimen>
+    <dimen name="fcr_board_stroke_width_level_1">4dp</dimen>
+    <dimen name="fcr_board_stroke_width_level_2">8dp</dimen>
+    <dimen name="fcr_board_stroke_width_level_3">10dp</dimen>
+    <dimen name="fcr_board_edit_margin_horizontal">10dp</dimen>
+    <dimen name="fcr_board_edit_box_width">40dp</dimen>
+    <dimen name="fcr_board_edit_box_height">40dp</dimen>
+    <dimen name="fcr_board_edit_icon_padding">5dp</dimen>
+    <dimen name="fcr_board_edit_port_margin_bottom">100dp</dimen>
+    <dimen name="fcr_board_edit_land_margin_bottom">10dp</dimen>
+    <dimen name="fcr_board_audio_icon_width">30dp</dimen>
+    <dimen name="fcr_board_audio_icon_height">30dp</dimen>
+    <dimen name="fcr_board_settings_panel_size">56dp</dimen>
+    <dimen name="fcr_board_toolbox_panel_size">66dp</dimen>
+    <dimen name="fcr_board_toolbox_item_space_main">10dp</dimen>
+    <dimen name="fcr_board_toolbox_item_space_cross">12dp</dimen>
+    <dimen name="fcr_board_toolbox_item_width">42dp</dimen>
+    <dimen name="fcr_board_toolbox_item_height">42dp</dimen>
+    <dimen name="fcr_board_color_pick_padding_main">8dp</dimen>
+    <dimen name="fcr_board_color_pick_divider_size">20dp</dimen>
+    <dimen name="fcr_board_shape_pick_padding_main">10dp</dimen>
+    <dimen name="fcr_board_scene_downloading_panel_width">295dp</dimen>
+    <dimen name="fcr_board_scene_downloading_panel_height">58dp</dimen>
+    <dimen name="fcr_board_scene_downloading_panel_padding_v">12dp</dimen>
+    <dimen name="fcr_board_scene_downloading_panel_padding_h">10dp</dimen>
+    <dimen name="fcr_board_scene_downloading_progressbar_height">9dp</dimen>
+    <dimen name="fcr_board_scene_downloading_progressbar_width">204dp</dimen>
+    <dimen name="fcr_board_bg_pick_panel_width">352dp</dimen>
+    <dimen name="fcr_board_bg_pick_panel_height">82dp</dimen>
+    <dimen name="fcr_vp_more_pages">384dp</dimen>
+</resources>

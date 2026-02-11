@@ -21,7 +21,7 @@ import java.io.FileNotFoundException
  * date : 2024/7/9
  * description :
  */
-object FcrBitmapUtils {
+internal object BitmapUtils {
     const val TAG = "FcrBitmapUtils"
 
     const val SUCCESS = 0

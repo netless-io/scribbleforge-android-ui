@@ -102,6 +102,14 @@ class WhiteboardStateStore(context: Context) {
                 )
             }
 
+            WhiteboardUiAction.HideDownloadPanel -> {
+                old.copy(
+                    layoutState = old.layoutState.copy(
+                        downloadShown = false
+                    )
+                )
+            }
+
             WhiteboardUiAction.HideBgPanel -> {
                 old.copy(
                     layoutState = old.layoutState.copy(
@@ -127,7 +135,7 @@ class WhiteboardStateStore(context: Context) {
 
             WhiteboardUiAction.FinishDownloading, WhiteboardUiAction.DownloadFailed -> {
                 old.copy(
-                    isDownloading = false, layoutState = old.layoutState.copy(downloadShown = false)
+                    isDownloading = false,
                 )
             }
 

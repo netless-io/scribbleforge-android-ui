@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import io.agora.board.forge.ui.R
-import io.agora.board.forge.ui.model.model.ToolType
+import io.agora.board.forge.ui.model.ToolType
 import io.agora.board.forge.ui.databinding.FcrBoardToolBoxComponentBinding
 import io.agora.board.forge.ui.component.state.DrawState
 import io.agora.board.forge.ui.model.imgResId
@@ -145,16 +145,6 @@ class FcrBoardToolBoxLayout @JvmOverloads constructor(
         updateDrawConfig()
     }
 
-    fun setUndoEnabled(undoEnabled: Boolean) {
-        toolBoxItems.find { it.type == FcrBoardToolBoxType.Undo }?.isEnabled = undoEnabled
-        toolBoxAdapter.setItems(toolBoxItems)
-    }
-
-    fun setRedoEnabled(redoEnabled: Boolean) {
-        toolBoxItems.find { it.type == FcrBoardToolBoxType.Redo }?.isEnabled = redoEnabled
-        toolBoxAdapter.setItems(toolBoxItems)
-    }
-
     private fun updateDrawConfig() {
         val drawConfig = drawState ?: return
         toolBoxItems.forEach { toolBoxItem ->
@@ -230,8 +220,6 @@ data class ToolBoxItem(
     val tools: List<ToolType> = listOf(),
     var index: Int = 0,
     var isSelected: Boolean = false,
-    // for undo redo item
-    var isEnabled: Boolean = true,
 )
 
 /**

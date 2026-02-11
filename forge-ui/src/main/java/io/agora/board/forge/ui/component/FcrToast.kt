@@ -18,7 +18,7 @@ import io.agora.board.forge.ui.R
  * date : 2024/4/07
  * description : 用于显示居中Toast提示。
  */
-internal object CenterToast {
+internal object FcrToast {
     private const val LEVEL_NORMAL = 1
     private const val LEVEL_INFO = 2
     private const val LEVEL_ALARM = 3

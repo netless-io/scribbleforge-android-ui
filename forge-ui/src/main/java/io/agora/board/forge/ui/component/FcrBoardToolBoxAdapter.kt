@@ -27,29 +27,27 @@ class FcrBoardToolBoxAdapter(private var itemList: List<ToolBoxItem>) :
         val item = itemList[position]
         val binding = holder.binding
 
+        binding.ivIcon.setImageResource(item.iconResId)
+        binding.ivIcon.visibility = View.VISIBLE
+        binding.vBackground.isSelected = item.isSelected
+
         if (item.type == FcrBoardToolBoxType.Stroke) {
-            binding.ivIcon.setImageResource(item.iconResId)
-            binding.ivIcon.visibility = View.VISIBLE
             binding.flStroke.visibility = View.VISIBLE
             drawState?.let {
                 binding.strokeDot.setDotColor(it.strokeColor)
                 binding.strokeDot.setDotSize(it.strokeWidth.toFloat())
             }
         } else {
-            binding.ivIcon.setImageResource(item.iconResId)
-            binding.ivIcon.visibility = View.VISIBLE
             binding.flStroke.visibility = View.GONE
         }
-        binding.vBackground.isSelected = item.isSelected
 
-        // undo redo
-        if (item.type == FcrBoardToolBoxType.Undo || item.type == FcrBoardToolBoxType.Redo) {
-            binding.ivIcon.alpha = if (item.isEnabled) 1f else 0.5f
-            binding.ivIcon.isEnabled = item.isEnabled
-        } else {
-            binding.ivIcon.alpha = 1f
-            binding.ivIcon.isEnabled = true
+        val enabled = when (item.type) {
+            FcrBoardToolBoxType.Undo -> drawState?.undo ?: false
+            FcrBoardToolBoxType.Redo -> drawState?.redo ?: false
+            else -> true
         }
+        binding.ivIcon.alpha = if (enabled) 1f else 0.5f
+        binding.ivIcon.isEnabled = enabled
 
         binding.root.setOnClickListener {
             onItemClickListener?.onItemClick(position)

@@ -51,7 +51,6 @@ fun ViewGroup.addMatchParent(view: View?) {
     )
 }
 
-
 fun ProgressBar.setProgressCompat(progress: Int, animated: Boolean) {
     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
         this.setProgress(progress, animated)

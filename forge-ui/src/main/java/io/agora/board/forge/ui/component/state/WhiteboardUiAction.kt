@@ -1,6 +1,6 @@
 package io.agora.board.forge.ui.component.state
 
-import io.agora.board.forge.ui.model.model.ToolType
+import io.agora.board.forge.ui.model.ToolType
 
 sealed interface WhiteboardUiAction {
     // 工具
@@ -16,6 +16,7 @@ sealed interface WhiteboardUiAction {
     data object ToggleStrokePanel : WhiteboardUiAction
     data object ToggleDownloadPanel : WhiteboardUiAction
     data object ToggleBgPanel : WhiteboardUiAction
+    data object HideDownloadPanel : WhiteboardUiAction
     data object HideBgPanel : WhiteboardUiAction
     data object HideAllPanel : WhiteboardUiAction
 

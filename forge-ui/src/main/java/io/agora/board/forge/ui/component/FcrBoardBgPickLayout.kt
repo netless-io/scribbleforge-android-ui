@@ -21,10 +21,6 @@ class FcrBoardBgPickLayout @JvmOverloads constructor(
 ) : CardView(context, attrs, defStyleAttr) {
     private val binding = FcrBoardBgPickLayoutBinding.inflate(LayoutInflater.from(context), this)
 
-    companion object {
-        const val TAG = "FcrBoardSceneDownloadingLayout"
-    }
-
     private var listener: BoardBgPickListener? = null
 
     val flBoards = listOf(binding.flWhiteBoard, binding.flBlackBoard, binding.flGreenBoard)

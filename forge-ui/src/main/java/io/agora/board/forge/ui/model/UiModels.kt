@@ -1,7 +1,6 @@
 package io.agora.board.forge.ui.model
 
 import io.agora.board.forge.ui.R
-import io.agora.board.forge.ui.model.model.ToolType
 
 /**
  * author : fenglibin

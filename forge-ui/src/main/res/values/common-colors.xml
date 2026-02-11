@@ -178,4 +178,11 @@
     <color name="fcr_ui_scene_ramp_brand0">#124262ff</color>
     <color name="fcr_ui_scene_hover">#1a4262ff</color>
     <color name="fcr_mobile_ui_scene_bigbg">#ffffffff</color>
+    <color name="fcr_mobile_ui_scene_color_popup_fill4">#fcf5f6fa</color>
+    <color name="fcr_ui_scene_card1">#ff67d569</color>
+    <color name="fcr_ui_scene_card2">#ffa19fff</color>
+    <color name="fcr_ui_scene_input3_forstartmeeting">#fff3f4f9</color>
+    <color name="fcr_ui_scene_card3">#ff1ac3d5</color>
+    <color name="fcr_ui_scene_ramp_red0">#1af5655c</color>
+    <color name="fcr_ui_scene_icontext9">#fff5655c</color>
 </resources>
