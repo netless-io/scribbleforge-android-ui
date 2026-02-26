@@ -5,8 +5,8 @@ import android.view.LayoutInflater
 import io.agora.board.forge.Room
 import io.agora.board.forge.RoomOptions
 import io.agora.board.forge.common.dev.FakeSocketProvider
-import io.agora.board.forge.ui.controller.WhiteboardController
-import io.agora.board.forge.ui.controller.WhiteboardControllerConfig
+import io.agora.board.forge.ui.whiteboard.WhiteboardController
+import io.agora.board.forge.ui.whiteboard.WhiteboardControllerConfig
 import io.agora.board.forge.ui.sample.databinding.ActivityWhiteboardUiBinding
 import io.agora.board.ui.sample.Constants
 

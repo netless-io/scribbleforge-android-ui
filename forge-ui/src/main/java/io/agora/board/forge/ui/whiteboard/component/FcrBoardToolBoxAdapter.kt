@@ -1,11 +1,11 @@
-package io.agora.board.forge.ui.component
+package io.agora.board.forge.ui.whiteboard.component
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.agora.board.forge.ui.databinding.FcrBoardToolBoxItemBinding
-import io.agora.board.forge.ui.component.state.DrawState
+import io.agora.board.forge.ui.whiteboard.state.DrawState
 
 /**
  * author : fenglibin

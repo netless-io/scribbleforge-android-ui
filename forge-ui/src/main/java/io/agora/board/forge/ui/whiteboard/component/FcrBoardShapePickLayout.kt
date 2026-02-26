@@ -1,4 +1,4 @@
-package io.agora.board.forge.ui.component
+package io.agora.board.forge.ui.whiteboard.component
 
 import android.content.Context
 import android.util.AttributeSet
@@ -10,10 +10,10 @@ import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import io.agora.board.forge.ui.R
-import io.agora.board.forge.ui.ToolType
 import io.agora.board.forge.ui.databinding.FcrBoardShapePickComponentBinding
 import io.agora.board.forge.ui.databinding.FcrBoardSubToolItemBinding
 import io.agora.board.forge.ui.internal.findForgeConfig
+import io.agora.board.forge.ui.ForgeUiToolType
 
 
 /**
@@ -26,8 +26,8 @@ class FcrBoardShapePickLayout @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
     private val binding = FcrBoardShapePickComponentBinding.inflate(LayoutInflater.from(context), this, true)
-    private var toolList = listOf<ToolType>()
-    private var selectedTool = ToolType.CURVE
+    private var toolList = listOf<ForgeUiToolType>()
+    private var selectedTool = ForgeUiToolType.CURVE
     private var shapePickListener: ShapePickListener? = null
     private var layoutOrientation: Int
 
@@ -71,7 +71,7 @@ class FcrBoardShapePickLayout @JvmOverloads constructor(
         binding.llShapeLayout.showDividers = LinearLayout.SHOW_DIVIDER_MIDDLE
     }
 
-    fun setTools(toolTypes: List<ToolType>) {
+    fun setTools(toolTypes: List<ForgeUiToolType>) {
         if (toolList != toolTypes) {
             toolList = toolTypes
             rebuildToolLayout()
@@ -87,7 +87,7 @@ class FcrBoardShapePickLayout @JvmOverloads constructor(
         }
     }
 
-    private fun createToolItemView(toolType: ToolType): View {
+    private fun createToolItemView(toolType: ForgeUiToolType): View {
         val toolItemBinding = FcrBoardSubToolItemBinding.inflate(
             LayoutInflater.from(context), this, false
         )
@@ -97,7 +97,7 @@ class FcrBoardShapePickLayout @JvmOverloads constructor(
         return toolItemBinding.root
     }
 
-    fun selectTool(toolType: ToolType) {
+    fun selectTool(toolType: ForgeUiToolType) {
         selectedTool = toolType
         updateSelectedTool()
     }
@@ -109,7 +109,7 @@ class FcrBoardShapePickLayout @JvmOverloads constructor(
     }
 
     interface ShapePickListener {
-        fun onToolClick(toolType: ToolType)
+        fun onToolClick(toolType: ForgeUiToolType)
     }
 
     fun setShapePickListener(listener: ShapePickListener) {

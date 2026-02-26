@@ -1,4 +1,4 @@
-package io.agora.board.forge.ui
+package io.agora.board.forge.ui.whiteboard.component
 
 data class ForgeError(
     var code: Int = -1,

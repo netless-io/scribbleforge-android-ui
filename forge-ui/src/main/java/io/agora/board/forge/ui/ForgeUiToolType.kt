@@ -3,7 +3,7 @@ package io.agora.board.forge.ui
 /**
  * Board tool type
  */
-enum class ToolType {
+enum class ForgeUiToolType {
     /**
      * Selector tool
      */

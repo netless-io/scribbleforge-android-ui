@@ -12,7 +12,7 @@
         android:background="@color/fcr_mobile_ui_scene_guide"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <io.agora.board.forge.ui.component.FcrBoardToolBoxLayout
+        <io.agora.board.forge.ui.whiteboard.component.FcrBoardToolBoxLayout
             android:id="@+id/board_tool_box"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -25,7 +25,7 @@
             android:background="@color/fcr_ui_scene_line3" />
     </FrameLayout>
 
-    <io.agora.board.forge.ui.component.FcrBoardShapePickLayout
+    <io.agora.board.forge.ui.whiteboard.component.FcrBoardShapePickLayout
         android:id="@+id/board_shape_pick_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
         app:layout_constraintRight_toRightOf="parent"
         tools:visibility="gone" />
 
-    <io.agora.board.forge.ui.component.FcrBoardColorPickLayout
+    <io.agora.board.forge.ui.whiteboard.component.FcrBoardColorPickLayout
         android:id="@+id/board_color_pick_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -45,7 +45,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
-    <io.agora.board.forge.ui.component.FcrBoardDownloadingLayout
+    <io.agora.board.forge.ui.whiteboard.component.FcrBoardDownloadingLayout
         android:id="@+id/board_scene_downloading_layout"
         android:layout_width="@dimen/fcr_board_scene_downloading_panel_width"
         android:layout_height="@dimen/fcr_board_scene_downloading_panel_height"
@@ -58,7 +58,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <io.agora.board.forge.ui.component.FcrBoardBgPickLayout
+    <io.agora.board.forge.ui.whiteboard.component.FcrBoardBgPickLayout
         android:id="@+id/board_bg_pick_layout"
         android:layout_width="@dimen/fcr_board_bg_pick_panel_width"
         android:layout_height="@dimen/fcr_board_bg_pick_panel_height"

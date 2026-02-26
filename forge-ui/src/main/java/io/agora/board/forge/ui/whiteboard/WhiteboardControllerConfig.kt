@@ -1,4 +1,4 @@
-package io.agora.board.forge.ui.controller
+package io.agora.board.forge.ui.whiteboard
 
 import io.agora.board.forge.whiteboard.WhiteboardOption
 

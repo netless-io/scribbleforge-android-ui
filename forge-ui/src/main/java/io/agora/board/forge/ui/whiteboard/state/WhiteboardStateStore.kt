@@ -1,4 +1,4 @@
-package io.agora.board.forge.ui.component.state
+package io.agora.board.forge.ui.whiteboard.state
 
 import android.content.Context
 import io.agora.board.forge.ui.theme.ForgeUiDefaults

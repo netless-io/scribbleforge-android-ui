@@ -1,4 +1,4 @@
-package io.agora.board.forge.ui.component
+package io.agora.board.forge.ui.whiteboard
 
 import android.content.Context
 import android.content.res.Configuration
@@ -10,20 +10,32 @@ import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import io.agora.board.forge.RoomCallback
 import io.agora.board.forge.RoomError
-import io.agora.board.forge.ui.ForgeError
-import io.agora.board.forge.ui.ForgeProgressCallback
+import io.agora.board.forge.ui.ForgeUiToolType
+import io.agora.board.forge.ui.internal.ForgeProgressCallback
 import io.agora.board.forge.ui.R
-import io.agora.board.forge.ui.component.state.DrawState
-import io.agora.board.forge.ui.component.state.LayoutState
-import io.agora.board.forge.ui.component.state.WhiteboardStateStore
-import io.agora.board.forge.ui.component.state.WhiteboardUiAction
-import io.agora.board.forge.ui.component.state.WhiteboardUiState
+import io.agora.board.forge.ui.common.ext.ForgeUiToast
+import io.agora.board.forge.ui.whiteboard.state.DrawState
+import io.agora.board.forge.ui.whiteboard.state.LayoutState
+import io.agora.board.forge.ui.whiteboard.state.WhiteboardStateStore
+import io.agora.board.forge.ui.whiteboard.state.WhiteboardUiAction
+import io.agora.board.forge.ui.whiteboard.state.WhiteboardUiState
 import io.agora.board.forge.ui.databinding.FcrBoardControlComponentBinding
 import io.agora.board.forge.ui.internal.FcrDeviceOrientation
 import io.agora.board.forge.ui.internal.animateHide
 import io.agora.board.forge.ui.internal.animateShow
 import io.agora.board.forge.ui.internal.findForgeConfig
-import io.agora.board.forge.ui.ToolType
+import io.agora.board.forge.ui.databinding.FcrBoardControlComponentPadBinding
+import io.agora.board.forge.ui.databinding.FcrBoardControlComponentPhoneLandBinding
+import io.agora.board.forge.ui.databinding.FcrBoardControlComponentPhonePortBinding
+import io.agora.board.forge.ui.whiteboard.component.BitmapUtils
+import io.agora.board.forge.ui.whiteboard.component.FcrBoardBgPickLayout
+import io.agora.board.forge.ui.whiteboard.component.FcrBoardColorPickLayout
+import io.agora.board.forge.ui.whiteboard.component.FcrBoardShapePickLayout
+import io.agora.board.forge.ui.whiteboard.component.FcrBoardToolBoxLayout
+import io.agora.board.forge.ui.whiteboard.component.FcrBoardToolBoxType
+import io.agora.board.forge.ui.whiteboard.component.FcrBoardUiDownloadingState
+import io.agora.board.forge.ui.whiteboard.component.ForgeError
+import io.agora.board.forge.ui.whiteboard.component.ToolBoxItem
 import io.agora.board.forge.whiteboard.SimpleWhiteboardListener
 import io.agora.board.forge.whiteboard.WhiteboardApplication
 import io.agora.board.forge.whiteboard.WhiteboardToolInfo
@@ -113,7 +125,7 @@ class WhiteboardControlLayout @JvmOverloads constructor(
 
     private fun setupShapePickListener() {
         val shapePickListener = object : FcrBoardShapePickLayout.ShapePickListener {
-            override fun onToolClick(toolType: ToolType) {
+            override fun onToolClick(toolType: ForgeUiToolType) {
                 setToolType(toolType)
             }
         }
@@ -127,7 +139,7 @@ class WhiteboardControlLayout @JvmOverloads constructor(
             override fun onBoardBgPicked(color: Int, toast: Int) {
                 syncBoardBackground(color) { success ->
                     if (success) {
-                        FcrToast.normal(context, toast)
+                        ForgeUiToast.normal(context, toast)
                         setBoardBackgroundColor(color)
                     }
                 }
@@ -350,7 +362,7 @@ class WhiteboardControlLayout @JvmOverloads constructor(
         }
 
         if (enable) {
-            FcrToast.normal(context, R.string.fcr_board_toast_two_finger_move)
+            ForgeUiToast.normal(context, R.string.fcr_board_toast_two_finger_move)
         }
     }
 
@@ -368,7 +380,7 @@ class WhiteboardControlLayout @JvmOverloads constructor(
         store.dispatch(WhiteboardUiAction.ChangeStrokeWidth(width))
     }
 
-    private fun setToolType(toolType: ToolType) {
+    private fun setToolType(toolType: ForgeUiToolType) {
         val current = store.state.value.drawState.toolType
         if (toolType != current) {
             showToolBoxToast(findForgeConfig().provider.toolToast(toolType))
@@ -379,7 +391,7 @@ class WhiteboardControlLayout @JvmOverloads constructor(
     }
 
     private fun showToolBoxToast(resId: Int) {
-        FcrToast.normal(context, resId)
+        ForgeUiToast.normal(context, resId)
     }
 
     /**
@@ -516,36 +528,36 @@ class WhiteboardControlLayout @JvmOverloads constructor(
         })
     }
 
-    private fun toWhiteboardToolType(type: ToolType): WhiteboardToolType =
+    private fun toWhiteboardToolType(type: ForgeUiToolType): WhiteboardToolType =
         when (type) {
-            ToolType.SELECTOR -> WhiteboardToolType.SELECTOR
-            ToolType.LASER_POINTER -> WhiteboardToolType.LASER
-            ToolType.ERASER -> WhiteboardToolType.ERASER
-            ToolType.CURVE -> WhiteboardToolType.CURVE
-            ToolType.STRAIGHT -> WhiteboardToolType.LINE
-            ToolType.ARROW -> WhiteboardToolType.ARROW
-            ToolType.RECTANGLE -> WhiteboardToolType.RECTANGLE
-            ToolType.ELLIPSE -> WhiteboardToolType.ELLIPSE
-            ToolType.TRIANGLE -> WhiteboardToolType.TRIANGLE
-            ToolType.TEXT -> WhiteboardToolType.TEXT
-            ToolType.HAND -> WhiteboardToolType.GRAB
-            ToolType.CLICKER -> WhiteboardToolType.POINTER
+            ForgeUiToolType.SELECTOR -> WhiteboardToolType.SELECTOR
+            ForgeUiToolType.LASER_POINTER -> WhiteboardToolType.LASER
+            ForgeUiToolType.ERASER -> WhiteboardToolType.ERASER
+            ForgeUiToolType.CURVE -> WhiteboardToolType.CURVE
+            ForgeUiToolType.STRAIGHT -> WhiteboardToolType.LINE
+            ForgeUiToolType.ARROW -> WhiteboardToolType.ARROW
+            ForgeUiToolType.RECTANGLE -> WhiteboardToolType.RECTANGLE
+            ForgeUiToolType.ELLIPSE -> WhiteboardToolType.ELLIPSE
+            ForgeUiToolType.TRIANGLE -> WhiteboardToolType.TRIANGLE
+            ForgeUiToolType.TEXT -> WhiteboardToolType.TEXT
+            ForgeUiToolType.HAND -> WhiteboardToolType.GRAB
+            ForgeUiToolType.CLICKER -> WhiteboardToolType.POINTER
             else -> WhiteboardToolType.CURVE
         }
 
     fun WhiteboardToolType?.toToolType() = when (this) {
-        WhiteboardToolType.CURVE -> ToolType.CURVE
-        WhiteboardToolType.RECTANGLE -> ToolType.RECTANGLE
-        WhiteboardToolType.SELECTOR -> ToolType.SELECTOR
-        WhiteboardToolType.LINE -> ToolType.STRAIGHT
-        WhiteboardToolType.ARROW -> ToolType.ARROW
-        WhiteboardToolType.TEXT -> ToolType.TEXT
-        WhiteboardToolType.ELLIPSE -> ToolType.ELLIPSE
-        WhiteboardToolType.TRIANGLE -> ToolType.TRIANGLE
-        WhiteboardToolType.ERASER -> ToolType.ERASER
-        WhiteboardToolType.LASER -> ToolType.LASER_POINTER
-        WhiteboardToolType.GRAB -> ToolType.HAND
-        WhiteboardToolType.POINTER -> ToolType.CLICKER
-        else -> ToolType.CURVE
+        WhiteboardToolType.CURVE -> ForgeUiToolType.CURVE
+        WhiteboardToolType.RECTANGLE -> ForgeUiToolType.RECTANGLE
+        WhiteboardToolType.SELECTOR -> ForgeUiToolType.SELECTOR
+        WhiteboardToolType.LINE -> ForgeUiToolType.STRAIGHT
+        WhiteboardToolType.ARROW -> ForgeUiToolType.ARROW
+        WhiteboardToolType.TEXT -> ForgeUiToolType.TEXT
+        WhiteboardToolType.ELLIPSE -> ForgeUiToolType.ELLIPSE
+        WhiteboardToolType.TRIANGLE -> ForgeUiToolType.TRIANGLE
+        WhiteboardToolType.ERASER -> ForgeUiToolType.ERASER
+        WhiteboardToolType.LASER -> ForgeUiToolType.LASER_POINTER
+        WhiteboardToolType.GRAB -> ForgeUiToolType.HAND
+        WhiteboardToolType.POINTER -> ForgeUiToolType.CLICKER
+        else -> ForgeUiToolType.CURVE
     }
 }

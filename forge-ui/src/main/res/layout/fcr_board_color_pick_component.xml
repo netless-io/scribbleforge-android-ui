@@ -20,7 +20,7 @@
         android:paddingHorizontal="@dimen/fcr_board_color_pick_padding_main"
         android:showDividers="middle">
 
-        <io.agora.board.forge.ui.component.FcrBoardDotView
+        <io.agora.board.forge.ui.whiteboard.component.FcrBoardDotView
             android:id="@+id/dot1"
             android:layout_width="32dp"
             android:layout_height="32dp"
@@ -28,7 +28,7 @@
             app:dotColor="@color/fcr_ui_scene_icontext5"
             app:dotSize="@dimen/fcr_board_stroke_width_level_1" />
 
-        <io.agora.board.forge.ui.component.FcrBoardDotView
+        <io.agora.board.forge.ui.whiteboard.component.FcrBoardDotView
             android:id="@+id/dot2"
             android:layout_width="32dp"
             android:layout_height="32dp"
@@ -36,7 +36,7 @@
             app:dotColor="@color/fcr_ui_scene_icontext5"
             app:dotSize="@dimen/fcr_board_stroke_width_level_2" />
 
-        <io.agora.board.forge.ui.component.FcrBoardDotView
+        <io.agora.board.forge.ui.whiteboard.component.FcrBoardDotView
             android:id="@+id/dot3"
             android:layout_width="32dp"
             android:layout_height="32dp"

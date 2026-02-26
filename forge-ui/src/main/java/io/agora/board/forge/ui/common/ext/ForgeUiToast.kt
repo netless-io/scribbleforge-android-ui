@@ -1,4 +1,4 @@
-package io.agora.board.forge.ui.component
+package io.agora.board.forge.ui.common.ext
 
 import android.content.Context
 import android.graphics.drawable.Drawable
@@ -18,7 +18,7 @@ import io.agora.board.forge.ui.R
  * date : 2024/4/07
  * description : 用于显示居中Toast提示。
  */
-internal object FcrToast {
+internal object ForgeUiToast {
     private const val LEVEL_NORMAL = 1
     private const val LEVEL_INFO = 2
     private const val LEVEL_ALARM = 3

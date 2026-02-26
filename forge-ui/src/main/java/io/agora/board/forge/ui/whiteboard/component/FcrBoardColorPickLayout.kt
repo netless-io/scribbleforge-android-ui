@@ -1,4 +1,4 @@
-package io.agora.board.forge.ui.component
+package io.agora.board.forge.ui.whiteboard.component
 
 import android.content.Context
 import android.content.res.ColorStateList
@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
 import io.agora.board.forge.ui.R
 import io.agora.board.forge.ui.databinding.FcrBoardColorPickComponentBinding
-import io.agora.board.forge.ui.component.state.DrawState
+import io.agora.board.forge.ui.whiteboard.state.DrawState
 
 /**
  * author : fenglibin

@@ -1,4 +1,4 @@
-package io.agora.board.forge.ui.component
+package io.agora.board.forge.ui.whiteboard.component
 
 import android.Manifest
 import android.R

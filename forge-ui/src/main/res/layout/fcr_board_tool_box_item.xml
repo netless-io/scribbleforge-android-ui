@@ -34,7 +34,7 @@
             android:layout_gravity="center"
             android:src="@mipmap/fcr_whiteboard_colorshape" />
 
-        <io.agora.board.forge.ui.component.FcrBoardDotView
+        <io.agora.board.forge.ui.whiteboard.component.FcrBoardDotView
             android:id="@+id/stroke_dot"
             android:layout_width="@dimen/fcr_board_icon_width"
             android:layout_height="@dimen/fcr_board_icon_height"

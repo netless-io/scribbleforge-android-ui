@@ -1,4 +1,4 @@
-package io.agora.board.forge.ui.controller
+package io.agora.board.forge.ui.whiteboard
 
 import android.widget.FrameLayout
 import io.agora.board.forge.ApplicationListener
@@ -6,8 +6,6 @@ import io.agora.board.forge.Room
 import io.agora.board.forge.RoomCallback
 import io.agora.board.forge.RoomError
 import io.agora.board.forge.ui.ForgeUIConfig
-import io.agora.board.forge.ui.component.WhiteboardContainer
-import io.agora.board.forge.ui.component.WhiteboardControlLayout
 import io.agora.board.forge.ui.internal.addMatchParent
 import io.agora.board.forge.whiteboard.WhiteboardApplication
 

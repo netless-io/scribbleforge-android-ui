@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center_horizontal"
     app:fcr_layoutOrientation="horizontal"
-    tools:parentTag="io.agora.board.forge.ui.component.FcrBoardToolBoxLayout">
+    tools:parentTag="io.agora.board.forge.ui.whiteboard.component.FcrBoardToolBoxLayout">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_tool_box"

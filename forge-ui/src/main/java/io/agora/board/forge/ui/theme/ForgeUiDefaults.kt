@@ -3,8 +3,8 @@ package io.agora.board.forge.ui.theme
 import android.content.Context
 import androidx.core.content.ContextCompat
 import io.agora.board.forge.ui.R
-import io.agora.board.forge.ui.component.state.DrawState
-import io.agora.board.forge.ui.ToolType
+import io.agora.board.forge.ui.whiteboard.state.DrawState
+import io.agora.board.forge.ui.ForgeUiToolType
 
 object ForgeUiDefaults {
     val strokeColors = listOf(
@@ -22,7 +22,7 @@ object ForgeUiDefaults {
 
     fun defaultDrawState(context: Context): DrawState {
         return DrawState(
-            toolType = ToolType.CURVE,
+            toolType = ForgeUiToolType.CURVE,
             strokeWidth = 4,
             strokeColor = ContextCompat.getColor(context, strokeColors[strokeIndex]),
             backgroundColor = ContextCompat.getColor(context, R.color.fcr_whiteboard_bg_white),
