@@ -1,22 +1,22 @@
 package io.agora.board.forge.ui.whiteboard
 
-import android.widget.FrameLayout
+import android.content.Context
 import io.agora.board.forge.ApplicationListener
 import io.agora.board.forge.Room
 import io.agora.board.forge.RoomCallback
 import io.agora.board.forge.RoomError
 import io.agora.board.forge.ui.ForgeUIConfig
-import io.agora.board.forge.ui.internal.addMatchParent
 import io.agora.board.forge.whiteboard.WhiteboardApplication
 
 class WhiteboardController(
-    private val container: FrameLayout,
+    context: Context,
     private val config: WhiteboardControllerConfig,
     private val forgeUIConfig: ForgeUIConfig = ForgeUIConfig()
 ) {
+    val view: WhiteboardContainer = WhiteboardContainer(context, forgeUIConfig)
+
     private var room: Room? = null
     private var whiteboardApp: WhiteboardApplication? = null
-    private var whiteboardContainer: WhiteboardContainer? = null
     private var whiteboardControlLayout: WhiteboardControlLayout? = null
     private var started: Boolean = false
 
@@ -35,9 +35,7 @@ class WhiteboardController(
     }
 
     init {
-        whiteboardContainer = WhiteboardContainer(container.context, forgeUIConfig).also {
-            whiteboardControlLayout = it.whiteboardControlLayout
-        }
+        whiteboardControlLayout = view.whiteboardControlLayout
     }
 
     fun start(room: Room, selfJoin: Boolean = false) {
@@ -80,9 +78,8 @@ class WhiteboardController(
     private fun handleAppLaunch() {
         val app = room?.getApp(config.appId) as? WhiteboardApplication ?: return
         whiteboardApp = app
-        whiteboardContainer?.addWhiteboardView(app.getView()!!)
+        view.addWhiteboardView(app.getView()!!)
         whiteboardControlLayout?.attachWhiteboard(app)
-        container.addMatchParent((whiteboardContainer))
     }
 
     private fun handleAppTerminate() {
@@ -90,9 +87,7 @@ class WhiteboardController(
     }
 
     private fun cleanup() {
-        container.removeView(whiteboardContainer)
         whiteboardControlLayout?.detachWhiteboard()
-        whiteboardControlLayout = null
         whiteboardApp = null
     }
 }

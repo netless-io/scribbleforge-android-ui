@@ -5,16 +5,17 @@ import android.view.LayoutInflater
 import io.agora.board.forge.Room
 import io.agora.board.forge.RoomOptions
 import io.agora.board.forge.common.dev.FakeSocketProvider
+import io.agora.board.forge.ui.sample.databinding.ActivityWhiteboardUiBinding
 import io.agora.board.forge.ui.whiteboard.WhiteboardController
 import io.agora.board.forge.ui.whiteboard.WhiteboardControllerConfig
-import io.agora.board.forge.ui.sample.databinding.ActivityWhiteboardUiBinding
 import io.agora.board.ui.sample.Constants
 
 /**
  * whiteboard ui activity
  */
 class WhiteboardUIActivity : BaseActivity<ActivityWhiteboardUiBinding>() {
-    private lateinit var whiteboardController: WhiteboardController
+    private lateinit var controller: WhiteboardController
+    private lateinit var room: Room
 
     override fun inflateBinding(inflater: LayoutInflater) = ActivityWhiteboardUiBinding.inflate(inflater)
 
@@ -33,20 +34,18 @@ class WhiteboardUIActivity : BaseActivity<ActivityWhiteboardUiBinding>() {
             appIdentifier("123/123")
         }
 
-        val room = Room(roomOptions)
+        room = Room(roomOptions)
 
-        whiteboardController = WhiteboardController(
-            container = binding.whiteboardContainer,
-            config = WhiteboardControllerConfig(
-                appId = "MainWhiteboard",
-            )
+        controller = WhiteboardController(
+            context = this,
+            config = WhiteboardControllerConfig()
         )
-
-        whiteboardController.start(room)
+        binding.whiteboardContainer.addView(controller.view)
+        controller.start(room)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        whiteboardController.stop()
+        controller.stop()
     }
 }
