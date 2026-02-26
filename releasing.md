@@ -24,8 +24,8 @@ Cutting a Release
     sed -i '' \
    "s/^VERSION_NAME=.*/VERSION_NAME=${RELEASE_VERSION}/" "gradle.properties"
     sed -i '' \
-   "s/^agoraBoardForge = \".*\"/agoraBoardForge = \"${RELEASE_VERSION}\"/" "gradle/libs.versions.toml"
-   find . -name "Room.kt" -exec sed -i '' 's/\(const val VERSION = "\)[^"]*\(".*\)/\1'"${RELEASE_VERSION}"'\2/' {} \;
+   "s/^agoraForgeUi = \".*\"/agoraForgeUi = \"${RELEASE_VERSION}\"/" "gradle/libs.versions.toml"
+   find . -name "ForgeUI.kt" -exec sed -i '' 's/\(const val VERSION = "\)[^"]*\(".*\)/\1'"${RELEASE_VERSION}"'\2/' {} \;
     ```
 
 4. Tag the release and push to GitHub.
@@ -43,7 +43,7 @@ Cutting a Release
 
 6. Check Maven
 
-- [ ] Check the release on [maven central](https://central.sonatype.com/artifact/io.github.duty-os.forge/forge-all)
+- [ ] Check the release on [maven central](https://central.sonatype.com/artifact/io.github.duty-os.forge/forge-ui)
 
 Local Testing
 ----------------

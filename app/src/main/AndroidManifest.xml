@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
-        android:name="io.agora.board.sample.MyApplication"
+        android:name="io.agora.board.ui.sample.MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:extractNativeLibs="false"
@@ -21,7 +21,7 @@
         tools:targetApi="35">
 
         <activity
-            android:name="io.agora.board.sample.MainActivity"
+            android:name="io.agora.board.ui.sample.MainActivity"
             android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboardHidden"
             android:exported="true">
             <intent-filter>
@@ -32,38 +32,8 @@
         </activity>
 
         <activity
-            android:name="io.agora.board.sample.page.apaas.ApaasSampleActivity"
-            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboardHidden"
-            android:exported="true" />
-
-        <activity
-            android:name="io.agora.board.sample.page.app.SampleActivity"
-            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboardHidden"
-            android:exported="true" />
-
-        <activity
-            android:name="io.agora.board.sample.page.SampleWindowActivity"
-            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboardHidden"
-            android:exported="true" />
-        <activity
-            android:name="io.agora.board.sample.page.app.SampleSlideActivity"
-            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboardHidden"
-            android:exported="true" />
-        <activity
-            android:name="io.agora.board.sample.page.app.SampleImageryDocActivity"
-            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboardHidden"
-            android:exported="true" />
-        <activity
-            android:name="io.agora.board.sample.page.app.SampleWhiteboardActivity"
+            android:name="io.agora.board.ui.sample.page.WhiteboardUIActivity"
             android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboardHidden"
             android:exported="false" />
-        <activity
-            android:name="io.agora.board.sample.page.WhiteboardUIActivity"
-            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboardHidden"
-            android:exported="false" />
-        <activity
-            android:name="io.agora.board.sample.page.app.SampleWritableActivity"
-            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboardHidden"
-            android:exported="true" />
     </application>
 </manifest>

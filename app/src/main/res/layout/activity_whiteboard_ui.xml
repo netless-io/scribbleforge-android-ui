@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="io.agora.board.sample.MainActivity">
+    tools:context="io.agora.board.ui.sample.MainActivity">
 
     <FrameLayout
         android:id="@+id/whiteboard_container"
@@ -16,7 +16,6 @@
         android:id="@+id/controller_layout"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@color/cardview_light_background"
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout

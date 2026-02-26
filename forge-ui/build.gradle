@@ -53,7 +53,7 @@ dependencies {
     implementation libs.androidx.cardview
     implementation libs.androidx.recyclerview
     implementation libs.androidx.constraintlayout
-    implementation libs.google.material
+    implementation libs.material
 
     // Forge SDK dependencies
     implementation libs.agora.board.forge.yjs

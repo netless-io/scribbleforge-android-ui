@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'io.agora.board.forge.sample'
+    namespace 'io.agora.board.forge.ui.sample'
     compileSdk 36
 
     defaultConfig {
-        applicationId "io.agora.board.forge.sample"
+        applicationId "io.agora.board.forge.ui.sample"
         minSdk 21
         targetSdk 35
         versionCode 1

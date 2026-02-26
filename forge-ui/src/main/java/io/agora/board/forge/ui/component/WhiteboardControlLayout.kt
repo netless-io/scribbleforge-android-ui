@@ -19,11 +19,11 @@ import io.agora.board.forge.ui.component.state.WhiteboardStateStore
 import io.agora.board.forge.ui.component.state.WhiteboardUiAction
 import io.agora.board.forge.ui.component.state.WhiteboardUiState
 import io.agora.board.forge.ui.databinding.FcrBoardControlComponentBinding
-import io.agora.board.forge.ui.internal.util.FcrDeviceOrientation
-import io.agora.board.forge.ui.internal.util.animateHide
-import io.agora.board.forge.ui.internal.util.animateShow
-import io.agora.board.forge.ui.model.ToolType
-import io.agora.board.forge.ui.model.toastResId
+import io.agora.board.forge.ui.internal.FcrDeviceOrientation
+import io.agora.board.forge.ui.internal.animateHide
+import io.agora.board.forge.ui.internal.animateShow
+import io.agora.board.forge.ui.internal.findForgeConfig
+import io.agora.board.forge.ui.ToolType
 import io.agora.board.forge.whiteboard.SimpleWhiteboardListener
 import io.agora.board.forge.whiteboard.WhiteboardApplication
 import io.agora.board.forge.whiteboard.WhiteboardToolInfo
@@ -371,7 +371,7 @@ class WhiteboardControlLayout @JvmOverloads constructor(
     private fun setToolType(toolType: ToolType) {
         val current = store.state.value.drawState.toolType
         if (toolType != current) {
-            showToolBoxToast(toolType.toastResId())
+            showToolBoxToast(findForgeConfig().provider.toolToast(toolType))
         }
 
         whiteboardApp?.setCurrentTool(toWhiteboardToolType(toolType))

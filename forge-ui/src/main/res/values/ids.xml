@@ -4,4 +4,6 @@
     <item name="forge_toolbar_container" type="id" />
     <item name="forge_picker_container" type="id" />
     <item name="forge_overlay_container" type="id" />
+
+    <item name="forge_ui_config_key" type="id" />
 </resources>

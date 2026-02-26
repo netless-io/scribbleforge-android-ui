@@ -14,9 +14,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GestureDetectorCompat
 import io.agora.board.forge.ui.R
 import io.agora.board.forge.ui.databinding.FcrBoardSceneDownloadingLayoutBinding
-import io.agora.board.forge.ui.internal.util.animateHide
-import io.agora.board.forge.ui.internal.util.animateShow
-import io.agora.board.forge.ui.internal.util.setProgressCompat
+import io.agora.board.forge.ui.internal.animateHide
+import io.agora.board.forge.ui.internal.animateShow
+import io.agora.board.forge.ui.internal.setProgressCompat
 
 /**
  * author : fenglibin

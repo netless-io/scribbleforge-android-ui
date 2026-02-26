@@ -10,10 +10,10 @@ import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import io.agora.board.forge.ui.R
-import io.agora.board.forge.ui.model.ToolType
+import io.agora.board.forge.ui.ToolType
 import io.agora.board.forge.ui.databinding.FcrBoardShapePickComponentBinding
 import io.agora.board.forge.ui.databinding.FcrBoardSubToolItemBinding
-import io.agora.board.forge.ui.model.imgResId
+import io.agora.board.forge.ui.internal.findForgeConfig
 
 
 /**
@@ -91,7 +91,7 @@ class FcrBoardShapePickLayout @JvmOverloads constructor(
         val toolItemBinding = FcrBoardSubToolItemBinding.inflate(
             LayoutInflater.from(context), this, false
         )
-        toolItemBinding.ivTool.setImageResource(toolType.imgResId())
+        toolItemBinding.ivTool.setImageResource(findForgeConfig().provider.toolIcon(toolType))
         toolItemBinding.root.tag = toolType
         toolItemBinding.root.setOnClickListener { shapePickListener?.onToolClick(toolType) }
         return toolItemBinding.root

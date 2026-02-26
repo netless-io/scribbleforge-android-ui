@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.core.content.ContextCompat
 import io.agora.board.forge.ui.R
 import io.agora.board.forge.ui.component.state.DrawState
-import io.agora.board.forge.ui.model.ToolType
+import io.agora.board.forge.ui.ToolType
 
 object ForgeUiDefaults {
     val strokeColors = listOf(

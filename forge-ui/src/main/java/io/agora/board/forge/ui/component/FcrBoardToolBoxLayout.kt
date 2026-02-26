@@ -12,10 +12,10 @@ import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import io.agora.board.forge.ui.R
-import io.agora.board.forge.ui.model.ToolType
+import io.agora.board.forge.ui.ToolType
 import io.agora.board.forge.ui.databinding.FcrBoardToolBoxComponentBinding
 import io.agora.board.forge.ui.component.state.DrawState
-import io.agora.board.forge.ui.model.imgResId
+import io.agora.board.forge.ui.internal.findForgeConfig
 
 /**
  * author : fenglibin
@@ -151,7 +151,7 @@ class FcrBoardToolBoxLayout @JvmOverloads constructor(
             val indexOf = toolBoxItem.tools.indexOf(drawConfig.toolType)
             if (indexOf >= 0) {
                 toolBoxItem.index = indexOf
-                toolBoxItem.iconResId = drawConfig.toolType.imgResId()
+                toolBoxItem.iconResId = findForgeConfig().provider.toolIcon(drawConfig.toolType)
             }
         }
         toolBoxAdapter.setDrawConfig(drawConfig)

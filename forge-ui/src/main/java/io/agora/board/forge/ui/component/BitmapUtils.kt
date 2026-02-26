@@ -12,7 +12,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
-import io.agora.board.forge.ui.internal.util.ForgeUiLogger
+import io.agora.board.forge.ui.internal.ForgeUiLogger
 import java.io.File
 import java.io.FileNotFoundException
 
