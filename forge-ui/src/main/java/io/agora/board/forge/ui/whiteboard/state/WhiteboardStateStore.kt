@@ -153,6 +153,14 @@ class WhiteboardStateStore(context: Context) {
                     ),
                 )
             }
+
+            is WhiteboardUiAction.WritableChanged -> {
+                old.copy(
+                    drawState = old.drawState.copy(
+                        canDraw = action.writable
+                    )
+                )
+            }
         }
     }
 }

@@ -27,7 +27,7 @@
             android:showDividers="middle">
 
             <FrameLayout
-                android:id="@+id/launchWhiteboard"
+                android:id="@+id/toggleWritable"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_margin="4dp"

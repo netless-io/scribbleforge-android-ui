@@ -58,13 +58,17 @@ class FcrBoardToolBoxLayout @JvmOverloads constructor(
             listOf(ForgeUiToolType.CURVE)
         ),
         ToolBoxItem(
+            FcrBoardToolBoxType.Tool,
+            R.mipmap.fcr_whiteboard_laserpen2,
+            listOf(ForgeUiToolType.LASER_POINTER)
+        ),
+        ToolBoxItem(
             FcrBoardToolBoxType.Tool, R.mipmap.fcr_whiteboard_shap_square, listOf(
                 ForgeUiToolType.RECTANGLE,
                 ForgeUiToolType.TRIANGLE,
                 ForgeUiToolType.ELLIPSE,
                 ForgeUiToolType.STRAIGHT,
                 ForgeUiToolType.ARROW,
-                ForgeUiToolType.LASER_POINTER,
             )
         ),
         ToolBoxItem(

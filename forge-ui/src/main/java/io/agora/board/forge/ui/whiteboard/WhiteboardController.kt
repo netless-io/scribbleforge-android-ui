@@ -6,6 +6,7 @@ import io.agora.board.forge.ApplicationListener
 import io.agora.board.forge.Room
 import io.agora.board.forge.RoomCallback
 import io.agora.board.forge.RoomError
+import io.agora.board.forge.WritableListener
 import io.agora.board.forge.ui.ForgeUIConfig
 import io.agora.board.forge.whiteboard.WhiteboardApplication
 
@@ -19,6 +20,7 @@ class WhiteboardController(
     private var room: Room? = null
     private var whiteboardApp: WhiteboardApplication? = null
     private var whiteboardControlLayout: WhiteboardControlLayout? = null
+
     private var started: Boolean = false
 
     private val appListener = object : ApplicationListener {
@@ -35,6 +37,14 @@ class WhiteboardController(
         }
     }
 
+    private val writableListener = object : WritableListener {
+        override fun onWritableChanged(userId: String, writable: Boolean) {
+            if (userId == room?.userManager?.userId) {
+                whiteboardControlLayout?.setWritable(writable)
+            }
+        }
+    }
+
     init {
         whiteboardControlLayout = view.whiteboardControlLayout
     }
@@ -42,32 +52,38 @@ class WhiteboardController(
     fun attach(container: ViewGroup) {
         val params = ViewGroup.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT
+            ViewGroup.LayoutParams.MATCH_PARENT,
         )
         container.addView(view, params)
     }
 
-    fun start(room: Room, selfJoin: Boolean = false) {
+    /**
+     * Start whiteboard.
+     *
+     * Default behavior: controller will join the room internally.
+     * If the room is already joined externally, joinRoom will be ignored by SDK.
+     */
+    fun start(room: Room) {
         if (started) return
         started = true
         this.room = room
         room.addAppListener(appListener)
+        room.addWritableListener(writableListener)
 
-        if (selfJoin) {
-            launchWhiteboardApp()
-            return
-        } else {
-            room.joinRoom(object : RoomCallback<Boolean> {
-                override fun onSuccess(result: Boolean) {
-                    launchWhiteboardApp()
-                }
+        room.joinRoom(object : RoomCallback<Boolean> {
+            override fun onSuccess(result: Boolean) {
+                launchWhiteboardApp()
+            }
 
-                override fun onFailure(error: RoomError) {
-                }
-            })
-        }
+            override fun onFailure(error: RoomError) {
+                started = false
+            }
+        })
     }
 
+    /**
+     * Stop whiteboard.
+     */
     fun stop() {
         if (!started) return
         started = false
@@ -75,12 +91,15 @@ class WhiteboardController(
         cleanup()
 
         room?.removeAppListener(appListener)
+        room?.removeWritableListener(writableListener)
         room?.leaveRoom()
     }
 
     private fun launchWhiteboardApp() {
         room?.launchApp(
-            type = WhiteboardApplication.TYPE, appId = config.appId, option = config.whiteboardOption
+            type = WhiteboardApplication.TYPE,
+            appId = config.appId,
+            option = config.whiteboardOption,
         )
     }
 
@@ -88,7 +107,7 @@ class WhiteboardController(
         val app = room?.getApp(config.appId) as? WhiteboardApplication ?: return
         whiteboardApp = app
         view.addWhiteboardView(app.getView()!!)
-        whiteboardControlLayout?.attachWhiteboard(app)
+        whiteboardControlLayout?.bind(app)
     }
 
     private fun handleAppTerminate() {
@@ -96,7 +115,7 @@ class WhiteboardController(
     }
 
     private fun cleanup() {
-        whiteboardControlLayout?.detachWhiteboard()
+        whiteboardControlLayout?.unbind()
         whiteboardApp = null
     }
 }

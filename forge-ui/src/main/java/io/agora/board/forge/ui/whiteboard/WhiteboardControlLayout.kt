@@ -13,7 +13,7 @@ import io.agora.board.forge.RoomError
 import io.agora.board.forge.ui.ForgeUiToolType
 import io.agora.board.forge.ui.internal.ForgeProgressCallback
 import io.agora.board.forge.ui.R
-import io.agora.board.forge.ui.common.ext.ForgeUiToast
+import io.agora.board.forge.ui.common.ext.ForgeToast
 import io.agora.board.forge.ui.whiteboard.state.DrawState
 import io.agora.board.forge.ui.whiteboard.state.LayoutState
 import io.agora.board.forge.ui.whiteboard.state.WhiteboardStateStore
@@ -24,7 +24,7 @@ import io.agora.board.forge.ui.internal.DeviceOrientation
 import io.agora.board.forge.ui.internal.animateHide
 import io.agora.board.forge.ui.internal.animateShow
 import io.agora.board.forge.ui.internal.findForgeConfig
-import io.agora.board.forge.ui.whiteboard.component.BitmapUtils
+import io.agora.board.forge.ui.internal.BitmapUtils
 import io.agora.board.forge.ui.whiteboard.component.FcrBoardBgPickLayout
 import io.agora.board.forge.ui.whiteboard.component.FcrBoardColorPickLayout
 import io.agora.board.forge.ui.whiteboard.component.FcrBoardShapePickLayout
@@ -98,10 +98,6 @@ class WhiteboardControlLayout @JvmOverloads constructor(
         binding.phonePortLayout.boardToolBox.setToolBoxListener(toolBoxListener)
         binding.phoneLoadLayout.boardToolBox.setToolBoxListener(toolBoxListener)
         binding.tabletLayout.boardToolBox.setToolBoxListener(toolBoxListener)
-
-        binding.tabletLayout.flExitDraw.setOnClickListener {
-            this@WhiteboardControlLayout.visibility = GONE
-        }
     }
 
     private fun setupStrokeSettingListener() {
@@ -135,7 +131,7 @@ class WhiteboardControlLayout @JvmOverloads constructor(
             override fun onBoardBgPicked(color: Int, toast: Int) {
                 syncBoardBackground(color) { success ->
                     if (success) {
-                        ForgeUiToast.normal(context, toast)
+                        ForgeToast.normal(context, toast)
                         setBoardBackgroundColor(color)
                     }
                 }
@@ -173,15 +169,19 @@ class WhiteboardControlLayout @JvmOverloads constructor(
         }
     }
 
-    fun attachWhiteboard(app: WhiteboardApplication) {
+    fun bind(app: WhiteboardApplication) {
         whiteboardApp = app
         whiteboardApp?.addListener(whiteboardListener)
         syncBoardViewState()
     }
 
-    fun detachWhiteboard() {
+    fun unbind() {
         this.whiteboardApp?.removeListener(whiteboardListener)
         this.whiteboardApp = null
+    }
+
+    fun setWritable(writable: Boolean) {
+        store.dispatch(WhiteboardUiAction.WritableChanged(writable))
     }
 
     private fun onClearClick() {
@@ -330,6 +330,8 @@ class WhiteboardControlLayout @JvmOverloads constructor(
     }
 
     private fun setUiEditMode(enable: Boolean) {
+        if (this.isVisible == enable) return
+
         this.visibility = if (enable) VISIBLE else INVISIBLE
 
         if (enable) {
@@ -358,7 +360,7 @@ class WhiteboardControlLayout @JvmOverloads constructor(
         }
 
         if (enable) {
-            ForgeUiToast.normal(context, R.string.fcr_board_toast_two_finger_move)
+            ForgeToast.normal(context, R.string.fcr_board_toast_two_finger_move)
         }
     }
 
@@ -387,7 +389,7 @@ class WhiteboardControlLayout @JvmOverloads constructor(
     }
 
     private fun showToolBoxToast(resId: Int) {
-        ForgeUiToast.normal(context, resId)
+        ForgeToast.normal(context, resId)
     }
 
     /**
@@ -413,6 +415,12 @@ class WhiteboardControlLayout @JvmOverloads constructor(
             boardColorPickLayout.setDrawConfig(drawState)
             boardShapePickLayout.selectTool(drawState.toolType)
             boardBgPickLayout.setBoardBackgroundColor(drawState.backgroundColor)
+        }
+
+        if (drawState.canDraw) {
+            setUiEditMode(true)
+        } else {
+            setUiEditMode(false)
         }
     }
 
@@ -461,7 +469,7 @@ class WhiteboardControlLayout @JvmOverloads constructor(
         setStrokeColor(current.strokeColor)
         setStrokeWidth(current.strokeWidth)
         setToolType(current.toolType)
-        whiteboardApp?.setFontSize(32f)
+        whiteboardApp?.setFontSize(current.fontSize)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration?) {

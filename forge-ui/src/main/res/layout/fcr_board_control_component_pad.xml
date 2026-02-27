@@ -22,29 +22,6 @@
             android:layout_gravity="center_horizontal"
             android:paddingHorizontal="10dp"
             app:fcr_layoutOrientation="horizontal" />
-
-        <View
-            android:layout_width="@dimen/fcr_v_divider_thin"
-            android:layout_height="25dp"
-            android:layout_gravity="center_vertical"
-            android:background="@color/fcr_ui_scene_line1" />
-
-        <FrameLayout
-            android:id="@+id/fl_exit_draw"
-            android:layout_width="@dimen/fcr_board_toolbox_item_width"
-            android:layout_height="@dimen/fcr_board_toolbox_item_height"
-            android:layout_gravity="center"
-            android:layout_marginHorizontal="8dp"
-            android:visibility="visible">
-
-            <ImageView
-                android:layout_width="@dimen/fcr_board_icon_width"
-                android:layout_height="@dimen/fcr_board_icon_height"
-                android:layout_gravity="center"
-                android:padding="4dp"
-                android:src="@mipmap/fcr_mobile_close"
-                app:tint="@color/fcr_ui_scene_icontext1" />
-        </FrameLayout>
     </LinearLayout>
 
     <io.agora.board.forge.ui.whiteboard.component.FcrBoardShapePickLayout

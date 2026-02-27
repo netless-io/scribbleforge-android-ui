@@ -12,9 +12,11 @@ data class DrawState(
     val toolType: ForgeUiToolType,
     val strokeWidth: Int,
     val strokeColor: Int,
+    val fontSize: Float = 32f,
     val backgroundColor: Int,
     val undo: Boolean = false,
     val redo: Boolean = false,
+    val canDraw: Boolean = true
 )
 
 data class LayoutState(

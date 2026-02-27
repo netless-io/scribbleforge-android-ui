@@ -27,5 +27,5 @@ sealed interface WhiteboardUiAction {
 
     // SDK 回调同步
     data class SyncToolFromWhiteboard(val tool: ForgeUiToolType) : WhiteboardUiAction
-
+    data class WritableChanged(val writable: Boolean) : WhiteboardUiAction
 }
