@@ -1,6 +1,7 @@
 package io.agora.board.forge.ui.whiteboard
 
 import android.content.Context
+import android.view.ViewGroup
 import io.agora.board.forge.ApplicationListener
 import io.agora.board.forge.Room
 import io.agora.board.forge.RoomCallback
@@ -13,7 +14,7 @@ class WhiteboardController(
     private val config: WhiteboardControllerConfig,
     private val forgeUIConfig: ForgeUIConfig = ForgeUIConfig()
 ) {
-    val view: WhiteboardContainer = WhiteboardContainer(context, forgeUIConfig)
+    val view: WhiteboardContainerView = WhiteboardContainerView(context, forgeUIConfig)
 
     private var room: Room? = null
     private var whiteboardApp: WhiteboardApplication? = null
@@ -36,6 +37,14 @@ class WhiteboardController(
 
     init {
         whiteboardControlLayout = view.whiteboardControlLayout
+    }
+
+    fun attach(container: ViewGroup) {
+        val params = ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
+        container.addView(view, params)
     }
 
     fun start(room: Room, selfJoin: Boolean = false) {

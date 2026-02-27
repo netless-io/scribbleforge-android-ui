@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.agora.board.forge.ui.databinding.FcrBoardToolBoxItemBinding
+import io.agora.board.forge.ui.internal.FoundationUtils
 import io.agora.board.forge.ui.whiteboard.state.DrawState
 
 /**
@@ -26,6 +27,7 @@ class FcrBoardToolBoxAdapter(private var itemList: List<ToolBoxItem>) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = itemList[position]
         val binding = holder.binding
+        val context = binding.root.context
 
         binding.ivIcon.setImageResource(item.iconResId)
         binding.ivIcon.visibility = View.VISIBLE
@@ -35,7 +37,7 @@ class FcrBoardToolBoxAdapter(private var itemList: List<ToolBoxItem>) :
             binding.flStroke.visibility = View.VISIBLE
             drawState?.let {
                 binding.strokeDot.setDotColor(it.strokeColor)
-                binding.strokeDot.setDotSize(it.strokeWidth.toFloat())
+                binding.strokeDot.setDotSize(FoundationUtils.dp2pxFloat(context, it.strokeWidth.toFloat()))
             }
         } else {
             binding.flStroke.visibility = View.GONE

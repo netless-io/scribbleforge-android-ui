@@ -3,7 +3,6 @@ package io.agora.board.ui.sample
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.addTextChangedListener
@@ -73,7 +72,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
         lifecycleScope.launch {
             userJob?.join()
-            Log.e("MainActivity", "user ${Constants.currentUser}")
             startActivity(Intent(this@MainActivity, clazz))
         }
     }

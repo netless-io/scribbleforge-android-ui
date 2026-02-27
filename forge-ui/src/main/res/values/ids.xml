@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="forge_board_container" type="id" />
+    <item name="forge_whiteboard_container" type="id" />
+    <item name="forge_whiteboard_control_layout" type="id" />
+
     <item name="forge_toolbar_container" type="id" />
     <item name="forge_picker_container" type="id" />
     <item name="forge_overlay_container" type="id" />

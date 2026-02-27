@@ -20,13 +20,10 @@ import io.agora.board.forge.ui.whiteboard.state.WhiteboardStateStore
 import io.agora.board.forge.ui.whiteboard.state.WhiteboardUiAction
 import io.agora.board.forge.ui.whiteboard.state.WhiteboardUiState
 import io.agora.board.forge.ui.databinding.FcrBoardControlComponentBinding
-import io.agora.board.forge.ui.internal.FcrDeviceOrientation
+import io.agora.board.forge.ui.internal.DeviceOrientation
 import io.agora.board.forge.ui.internal.animateHide
 import io.agora.board.forge.ui.internal.animateShow
 import io.agora.board.forge.ui.internal.findForgeConfig
-import io.agora.board.forge.ui.databinding.FcrBoardControlComponentPadBinding
-import io.agora.board.forge.ui.databinding.FcrBoardControlComponentPhoneLandBinding
-import io.agora.board.forge.ui.databinding.FcrBoardControlComponentPhonePortBinding
 import io.agora.board.forge.ui.whiteboard.component.BitmapUtils
 import io.agora.board.forge.ui.whiteboard.component.FcrBoardBgPickLayout
 import io.agora.board.forge.ui.whiteboard.component.FcrBoardColorPickLayout
@@ -34,7 +31,6 @@ import io.agora.board.forge.ui.whiteboard.component.FcrBoardShapePickLayout
 import io.agora.board.forge.ui.whiteboard.component.FcrBoardToolBoxLayout
 import io.agora.board.forge.ui.whiteboard.component.FcrBoardToolBoxType
 import io.agora.board.forge.ui.whiteboard.component.FcrBoardUiDownloadingState
-import io.agora.board.forge.ui.whiteboard.component.ForgeError
 import io.agora.board.forge.ui.whiteboard.component.ToolBoxItem
 import io.agora.board.forge.whiteboard.SimpleWhiteboardListener
 import io.agora.board.forge.whiteboard.WhiteboardApplication
@@ -240,10 +236,10 @@ class WhiteboardControlLayout @JvmOverloads constructor(
         store.dispatch(WhiteboardUiAction.StartDownloading)
         downloadHideJob?.cancel()
 
-        val downloadLayout = when (FcrDeviceOrientation.Companion.get(context)) {
-            FcrDeviceOrientation.PhonePortrait -> binding.phonePortLayout.boardSceneDownloadingLayout
-            FcrDeviceOrientation.PhoneLandscape -> binding.phoneLoadLayout.boardSceneDownloadingLayout
-            FcrDeviceOrientation.TabletPortrait, FcrDeviceOrientation.TabletLandscape -> binding.tabletLayout.boardSceneDownloadingLayout
+        val downloadLayout = when (DeviceOrientation.Companion.get(context)) {
+            DeviceOrientation.PhonePortrait -> binding.phonePortLayout.boardSceneDownloadingLayout
+            DeviceOrientation.PhoneLandscape -> binding.phoneLoadLayout.boardSceneDownloadingLayout
+            DeviceOrientation.TabletPortrait, DeviceOrientation.TabletLandscape -> binding.tabletLayout.boardSceneDownloadingLayout
         }
         downloadLayout.setDownloadState(FcrBoardUiDownloadingState.DOWNLOADING)
         getAllWindowsSnapshotImageList(object : ForgeProgressCallback<Array<Bitmap>> {
@@ -279,7 +275,7 @@ class WhiteboardControlLayout @JvmOverloads constructor(
                 }
             }
 
-            override fun onFailure(error: ForgeError) {
+            override fun onFailure(error: Exception) {
                 downloadLayout.setDownloadState(FcrBoardUiDownloadingState.FAILURE)
                 store.dispatch(WhiteboardUiAction.FinishDownloading)
             }
@@ -338,22 +334,22 @@ class WhiteboardControlLayout @JvmOverloads constructor(
 
         if (enable) {
             val delayTime = resources.getInteger(R.integer.fcr_animator_duration_short).toLong()
-            when (FcrDeviceOrientation.Companion.get(context)) {
-                FcrDeviceOrientation.PhonePortrait -> {
+            when (DeviceOrientation.Companion.get(context)) {
+                DeviceOrientation.PhonePortrait -> {
                     binding.phonePortLayout.fcrBoardToolBoxWrapper.run {
                         startAnimation(AnimationUtils.loadAnimation(context, R.anim.fcr_board_slide_in_bottom_fade_in))
                     }
                     postDelayed({ binding.phonePortLayout.boardToolBox.animateGuide() }, delayTime)
                 }
 
-                FcrDeviceOrientation.PhoneLandscape -> {
+                DeviceOrientation.PhoneLandscape -> {
                     binding.phoneLoadLayout.fcrBoardToolBoxWrapper.run {
                         startAnimation(AnimationUtils.loadAnimation(context, R.anim.fcr_board_slide_in_right_fade_in))
                     }
                     postDelayed({ binding.phoneLoadLayout.boardToolBox.animateGuide() }, delayTime)
                 }
 
-                FcrDeviceOrientation.TabletPortrait, FcrDeviceOrientation.TabletLandscape -> {
+                DeviceOrientation.TabletPortrait, DeviceOrientation.TabletLandscape -> {
                     binding.tabletLayout.fcrBoardToolBoxWrapper.run {
                         startAnimation(AnimationUtils.loadAnimation(context, R.anim.fcr_board_slide_in_bottom_fade_in))
                     }
@@ -376,7 +372,7 @@ class WhiteboardControlLayout @JvmOverloads constructor(
     }
 
     private fun setStrokeWidth(width: Int) {
-        whiteboardApp?.setStrokeWidth(width.toFloat())
+        whiteboardApp?.setStrokeWidth(width.toFloat() * context.resources.displayMetrics.density)
         store.dispatch(WhiteboardUiAction.ChangeStrokeWidth(width))
     }
 
@@ -477,16 +473,16 @@ class WhiteboardControlLayout @JvmOverloads constructor(
         binding.tabletLayout.root.isVisible = false
         binding.phonePortLayout.root.isVisible = false
         binding.phoneLoadLayout.root.isVisible = false
-        when (FcrDeviceOrientation.Companion.get(context)) {
-            FcrDeviceOrientation.TabletPortrait, FcrDeviceOrientation.TabletLandscape -> {
+        when (DeviceOrientation.Companion.get(context)) {
+            DeviceOrientation.TabletPortrait, DeviceOrientation.TabletLandscape -> {
                 binding.tabletLayout.root.isVisible = true
             }
 
-            FcrDeviceOrientation.PhonePortrait -> {
+            DeviceOrientation.PhonePortrait -> {
                 binding.phonePortLayout.root.isVisible = true
             }
 
-            FcrDeviceOrientation.PhoneLandscape -> {
+            DeviceOrientation.PhoneLandscape -> {
                 binding.phoneLoadLayout.root.isVisible = true
             }
         }
@@ -517,13 +513,13 @@ class WhiteboardControlLayout @JvmOverloads constructor(
                         }
                         callback.onSuccess(bitmaps.toTypedArray())
                     } catch (e: Exception) {
-                        callback.onFailure(ForgeError(message = e.message))
+                        callback.onFailure(e)
                     }
                 }
             }
 
             override fun onFailure(error: RoomError) {
-                callback.onFailure(ForgeError(message = error.message))
+                callback.onFailure(error)
             }
         })
     }

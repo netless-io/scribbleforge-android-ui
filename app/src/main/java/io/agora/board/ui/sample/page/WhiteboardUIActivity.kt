@@ -14,8 +14,8 @@ import io.agora.board.ui.sample.Constants
  * whiteboard ui activity
  */
 class WhiteboardUIActivity : BaseActivity<ActivityWhiteboardUiBinding>() {
-    private lateinit var controller: WhiteboardController
     private lateinit var room: Room
+    private lateinit var controller: WhiteboardController
 
     override fun inflateBinding(inflater: LayoutInflater) = ActivityWhiteboardUiBinding.inflate(inflater)
 
@@ -40,7 +40,7 @@ class WhiteboardUIActivity : BaseActivity<ActivityWhiteboardUiBinding>() {
             context = this,
             config = WhiteboardControllerConfig()
         )
-        binding.whiteboardContainer.addView(controller.view)
+        controller.attach(binding.whiteboardContainer)
         controller.start(room)
     }
 

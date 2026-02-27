@@ -17,12 +17,11 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven { url 'https://jitpack.io' }
-
-        mavenLocal() // Include local Maven repository
+        maven { url = uri('/Users/flb/MavenRepo') }
     }
 }
 
-rootProject.name = "ForgeUI"
+rootProject.name = "ScribbleForgeUI"
 include ':app'
 include ':forge-ui'
 

@@ -74,11 +74,13 @@ dependencies {
     } else {
         implementation libs.agora.board.forge.ui
     }
+
     if (project.findProject(':forge-room') != null) {
         implementation project(':forge-room')
     } else {
         implementation libs.agora.board.forge.room
     }
+
     implementation libs.agora.board.forge.rtmprovider
 }
 

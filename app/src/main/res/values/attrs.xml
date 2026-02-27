@@ -48,7 +48,7 @@
         <attr name="fcr_layoutOrientation" />
     </declare-styleable>
 
-    <declare-styleable name="FcrBoardColorPick">
+    <declare-styleable name="FcrBoardColorPickLayout">
         <attr name="fcr_layoutOrientation" />
     </declare-styleable>
 </resources>

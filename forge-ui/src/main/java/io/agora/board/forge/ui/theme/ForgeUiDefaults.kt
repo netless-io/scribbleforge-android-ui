@@ -20,10 +20,14 @@ object ForgeUiDefaults {
             return 0
         }
 
+    val strokeWidths = listOf(
+        2, 4, 6
+    )
+
     fun defaultDrawState(context: Context): DrawState {
         return DrawState(
             toolType = ForgeUiToolType.CURVE,
-            strokeWidth = 4,
+            strokeWidth = strokeWidths[0],
             strokeColor = ContextCompat.getColor(context, strokeColors[strokeIndex]),
             backgroundColor = ContextCompat.getColor(context, R.color.fcr_whiteboard_bg_white),
         )

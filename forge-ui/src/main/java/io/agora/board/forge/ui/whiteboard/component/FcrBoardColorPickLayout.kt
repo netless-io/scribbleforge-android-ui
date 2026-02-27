@@ -12,6 +12,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
 import io.agora.board.forge.ui.R
 import io.agora.board.forge.ui.databinding.FcrBoardColorPickComponentBinding
+import io.agora.board.forge.ui.internal.FoundationUtils
+import io.agora.board.forge.ui.theme.ForgeUiDefaults
 import io.agora.board.forge.ui.whiteboard.state.DrawState
 
 /**
@@ -27,13 +29,9 @@ class FcrBoardColorPickLayout @JvmOverloads constructor(
     private val dots = listOf(binding.dot1, binding.dot2, binding.dot3)
     private val colors = listOf(binding.color1, binding.color2, binding.color3, binding.color4, binding.color5)
 
-    private val dotData = listOf(
-        2,
-        6,
-        10
-    )
+    private val strokeWidths = ForgeUiDefaults.strokeWidths
 
-    private val colorData = listOf(
+    private val strokeColors = listOf(
         ContextCompat.getColor(context, R.color.fcr_whiteboard_color_red),
         ContextCompat.getColor(context, R.color.fcr_whiteboard_color_yellow),
         ContextCompat.getColor(context, R.color.fcr_whiteboard_color_green),
@@ -42,9 +40,9 @@ class FcrBoardColorPickLayout @JvmOverloads constructor(
     )
 
     init {
-        val orientation = context.obtainStyledAttributes(attrs, R.styleable.FcrBoardToolBox).run {
+        val orientation = context.obtainStyledAttributes(attrs, R.styleable.FcrBoardColorPickLayout).run {
             try {
-                getInt(R.styleable.FcrBoardToolBox_fcr_layoutOrientation, FcrBoardToolBoxLayout.HORIZONTAL)
+                getInt(R.styleable.FcrBoardColorPickLayout_fcr_layoutOrientation, FcrBoardToolBoxLayout.HORIZONTAL)
             } finally {
                 recycle()
             }
@@ -101,16 +99,16 @@ class FcrBoardColorPickLayout @JvmOverloads constructor(
     private fun setupDots() {
         dots.forEachIndexed { index, dotView ->
             // setDotSize 仍然用 px
-            dotView.setDotSize(dotData[index].toFloat() * context.resources.displayMetrics.density)
+            dotView.setDotSize(FoundationUtils.dp2pxFloat(context, strokeWidths[index].toFloat()))
             // onStrokeWidthClick 传 dp
-            dotView.setOnClickListener { onStrokeSettingListener?.onStrokeWidthClick(dotData[index]) }
+            dotView.setOnClickListener { onStrokeSettingListener?.onStrokeWidthClick(strokeWidths[index]) }
         }
     }
 
     private fun setupColors() {
         colors.forEachIndexed { index, colorView ->
-            colorView.imageTintList = ColorStateList.valueOf(colorData[index])
-            colorView.setOnClickListener { onStrokeSettingListener?.onStrokeColorClick(colorData[index]) }
+            colorView.imageTintList = ColorStateList.valueOf(strokeColors[index])
+            colorView.setOnClickListener { onStrokeSettingListener?.onStrokeColorClick(strokeColors[index]) }
         }
     }
 
@@ -128,11 +126,11 @@ class FcrBoardColorPickLayout @JvmOverloads constructor(
 
     fun setDrawConfig(drawState: DrawState) {
         dots.forEachIndexed { index, fcrBoardDotView ->
-            fcrBoardDotView.isSelected = dotData[index] == drawState.strokeWidth
+            fcrBoardDotView.isSelected = strokeWidths[index] == drawState.strokeWidth
         }
 
         colors.forEachIndexed { index, imageView ->
-            imageView.isSelected = colorData[index] == drawState.strokeColor
+            imageView.isSelected = strokeColors[index] == drawState.strokeColor
         }
     }
 }
