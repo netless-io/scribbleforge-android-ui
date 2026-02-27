@@ -1,4 +1,4 @@
-package io.agora.board.forge.ui.whiteboard.component
+package io.agora.board.forge.ui.common.ext
 
 import android.Manifest
 import android.R
@@ -17,7 +17,7 @@ import java.lang.ref.WeakReference
  * date : 2024/8/5
  * description : 权限申请 fragment
  */
-internal class PermissionsFragment : Fragment() {
+internal class ForgePermissionsFragment : Fragment() {
 
     private lateinit var permissionsRequired: Array<String>
 
@@ -62,7 +62,7 @@ internal class PermissionsFragment : Fragment() {
             onGranted: () -> Unit,
             onDenied: () -> Unit,
         ) {
-            val fragment = PermissionsFragment()
+            val fragment = ForgePermissionsFragment()
             fragment.permissionsRequired = permissions
             fragment.onGranted = onGranted
             fragment.onDenied = onDenied

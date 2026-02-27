@@ -1,4 +1,4 @@
-package io.agora.board.forge.ui.whiteboard.component
+package io.agora.board.forge.ui.internal
 
 import android.content.ContentValues
 import android.content.Context
@@ -12,7 +12,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
-import io.agora.board.forge.ui.internal.ForgeUiLogger
 import java.io.File
 import java.io.FileNotFoundException
 
@@ -22,7 +21,7 @@ import java.io.FileNotFoundException
  * description :
  */
 internal object BitmapUtils {
-    const val TAG = "FcrBitmapUtils"
+    const val TAG = "BitmapUtils"
 
     const val SUCCESS = 0
     private const val ERROR_SAVE_FAILED = 1
@@ -68,7 +67,11 @@ internal object BitmapUtils {
                 ERROR_SAVE_FAILED
             } else {
                 val file = File(realPath)
-                context.sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)))
+                context.sendBroadcast(
+                    Intent(
+                        Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)
+                    )
+                )
                 SUCCESS
             }
         } catch (e: FileNotFoundException) {
@@ -84,8 +87,9 @@ internal object BitmapUtils {
             put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
         }
 
-        val uri = context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-            ?: return ERROR_INSERT_FAILED
+        val uri =
+            context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+                ?: return ERROR_INSERT_FAILED
 
         return try {
             context.contentResolver.openOutputStream(uri)?.use { outputStream ->

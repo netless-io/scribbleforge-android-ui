@@ -1,5 +1,4 @@
-package io.agora.board.forge.ui.whiteboard.component
-
+package io.agora.board.forge.ui.common.ext
 
 import android.content.Context
 import android.os.Build
@@ -11,7 +10,7 @@ import androidx.cardview.widget.CardView
  * date : 2024/6/28
  * description : 兼容 Android 29（Android Q）以前，View ClipToOutline 底层实现不处理 radius 超过一半宽高情况。
  */
-class FcrCardView @JvmOverloads constructor(
+class ForgeCardView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
