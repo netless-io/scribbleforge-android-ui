@@ -10,7 +10,7 @@ import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import io.agora.board.forge.RoomCallback
 import io.agora.board.forge.RoomError
-import io.agora.board.forge.ui.ForgeUiToolType
+import io.agora.board.forge.ui.model.ForgeUiToolType
 import io.agora.board.forge.ui.internal.ForgeProgressCallback
 import io.agora.board.forge.ui.R
 import io.agora.board.forge.ui.common.ext.ForgeToast

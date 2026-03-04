@@ -15,7 +15,7 @@ import io.agora.board.forge.ui.R
 import io.agora.board.forge.ui.databinding.FcrBoardToolBoxComponentBinding
 import io.agora.board.forge.ui.whiteboard.state.DrawState
 import io.agora.board.forge.ui.internal.findForgeConfig
-import io.agora.board.forge.ui.ForgeUiToolType
+import io.agora.board.forge.ui.model.ForgeUiToolType
 import kotlin.collections.indexOf
 
 /**

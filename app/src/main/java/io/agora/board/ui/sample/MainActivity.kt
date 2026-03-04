@@ -7,12 +7,14 @@ import android.view.LayoutInflater
 import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
-import io.agora.board.forge.Room
+import io.agora.board.forge.ui.ForgeUI
 import io.agora.board.forge.ui.sample.BuildConfig
 import io.agora.board.forge.ui.sample.databinding.ActivityMainBinding
 import io.agora.board.ui.sample.page.BaseActivity
 import io.agora.board.ui.sample.page.WhiteboardUIActivity
+import io.agora.board.ui.sample.util.ConfigLoader
 import io.agora.board.ui.sample.util.KvStore
+import io.agora.board.ui.sample.util.RtmHelper
 import io.agora.board.ui.sample.util.RtmTokenUpdater
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -20,14 +22,15 @@ import kotlinx.coroutines.launch
 class MainActivity : BaseActivity<ActivityMainBinding>() {
     private var userJob: Job? = null
 
-    override fun inflateBinding(inflater: LayoutInflater) = ActivityMainBinding.inflate(layoutInflater)
+    override fun inflateBinding(inflater: LayoutInflater) =
+        ActivityMainBinding.inflate(layoutInflater)
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding.buildVersion.text = "v${BuildConfig.BUILD_VERSION}"
-        binding.roomVersion.text = "forge-sdk:${Room.VERSION}"
+        binding.roomVersion.text = "forge-ui:${ForgeUI.VERSION}"
         binding.inputRoomId.addTextChangedListener {
             updateView()
         }
@@ -41,8 +44,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 AlertDialog.Builder(this).setTitle("确认更新").setMessage("Room ID \n$roomId")
                     .setPositiveButton("确认") { dialog, _ ->
                         // 用户点击确认按钮
-                        Constants.roomId = roomId
-                        Constants.roomToken = token
+                        ConfigLoader.roomId = roomId
+                        ConfigLoader.roomToken = token
                         updateView()
                         dialog.dismiss()
                     }.setNegativeButton("取消") { dialog, _ ->
@@ -56,9 +59,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         }
 
         binding.swWritable.setOnCheckedChangeListener { _, isChecked ->
-            Constants.writable = isChecked
+            ConfigLoader.writable = isChecked
         }
-        binding.swWritable.isChecked = Constants.writable
+        binding.swWritable.isChecked = ConfigLoader.writable
 
         updateView()
         loadUser()
@@ -80,15 +83,16 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         userJob?.cancel()
         userJob = lifecycleScope.launch {
             RtmTokenUpdater(this@MainActivity).getRtmToken()
+            RtmHelper.getInstance().login()
         }
         userJob?.start()
     }
 
     @SuppressLint("SetTextI18n")
     private fun updateView() {
-        binding.roomId.text = "roomId: ${Constants.roomId}"
+        binding.roomId.text = "roomId: ${ConfigLoader.roomId}"
         binding.updateRoomId.isEnabled =
             binding.inputRoomId.text.isNotEmpty() && binding.inputRoomToken.text.isNotEmpty()
-        binding.inputUserId.hint = KvStore.getUserId()
+        binding.inputUserId.hint = ConfigLoader.userId
     }
 }

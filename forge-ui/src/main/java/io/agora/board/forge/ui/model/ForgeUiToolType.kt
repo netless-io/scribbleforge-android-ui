@@ -1,4 +1,4 @@
-package io.agora.board.forge.ui
+package io.agora.board.forge.ui.model
 
 /**
  * Board tool type

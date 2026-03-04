@@ -12,11 +12,6 @@ object KvStore {
     private const val KEY_ROOM_TOKEN = "roomToken"
     private const val KEY_WRITEABLE = "isWriteable"
 
-    // AppSettings keys
-    const val KEY_DOC_DISPLAY_MODE = "imageryDoc.displayMode"
-    const val KEY_DOC_INHERITWHITEBOARDID = "imageryDoc.inheritWhiteboardId"
-    const val KEY_SLIDE_INHERITWHITEBOARDID = "slide.inheritWhiteboardId"
-
     private lateinit var prefs: SharedPreferences
 
     fun init(context: Context) {
@@ -62,30 +57,6 @@ object KvStore {
         prefs.edit().putBoolean(KEY_WRITEABLE, isWriteable).apply()
     }
 
-    fun isDocContinuousMode(defaultValue: Boolean = false): Boolean {
-        return prefs.getBoolean(KEY_DOC_DISPLAY_MODE, defaultValue)
-    }
-
-    fun setDocContinuousMode(isContinuous: Boolean) {
-        prefs.edit().putBoolean(KEY_DOC_DISPLAY_MODE, isContinuous).apply()
-    }
-
-    fun isDocInheritWhiteboardId(defaultValue: Boolean = true): Boolean {
-        return prefs.getBoolean(KEY_DOC_INHERITWHITEBOARDID, defaultValue)
-    }
-
-    fun setDocInheritWhiteboardId(inherit: Boolean) {
-        prefs.edit().putBoolean(KEY_DOC_INHERITWHITEBOARDID, inherit).apply()
-    }
-
-    fun isSlideInheritWhiteboardId(defaultValue: Boolean = true): Boolean {
-        return prefs.getBoolean(KEY_SLIDE_INHERITWHITEBOARDID, defaultValue)
-    }
-
-    fun setSlideInheritWhiteboardId(inherit: Boolean) {
-        prefs.edit().putBoolean(KEY_SLIDE_INHERITWHITEBOARDID, inherit).apply()
-    }
-
     private val gson = Gson()
 
     fun set(key: String, value: Any) {
@@ -113,8 +84,8 @@ object KvStore {
         }
     }
 
-    private fun getOrCreateUID(): String {
-        return prefs.getString(KEY_UID, null) ?: "android_${randomString(6)}".also {
+    private fun getOrCreateUID(defaultValue: String? = null): String {
+        return prefs.getString(KEY_UID, null) ?: (defaultValue?.takeIf { it.isNotBlank() } ?: "android_${randomString(6)}").also {
             prefs.edit().putString(KEY_UID, it).apply()
         }
     }

@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import io.agora.board.ui.sample.Constants
 import kotlinx.coroutines.delay
 import okhttp3.Call
 import okhttp3.Callback
@@ -24,8 +23,8 @@ class RtmTokenUpdater(val context: Context) {
     suspend fun getRtmToken() {
         repeat(3) {
             try {
-                val token = requestToken(KvStore.getUserId())
-                KvStore.setUserRtmToken(KvStore.getUserId(), token)
+                val token = requestToken(ConfigLoader.userId)
+                KvStore.setUserRtmToken(ConfigLoader.userId, token)
                 return
             } catch (e: Exception) {
                 Log.e("RtmTokenUpdater", "refresh token failed: $e")
@@ -36,9 +35,9 @@ class RtmTokenUpdater(val context: Context) {
 
     private suspend fun requestToken(userId: String) = suspendCoroutine<String> { cont ->
         val request = Request.Builder()
-            .url("${Constants.ENDPOINT}/${Constants.roomId}/$userId/rtm/token")
+            .url("${ConfigLoader.endpointForRequest}/${ConfigLoader.roomId}/$userId/rtm/token")
             .post("".toRequestBody())
-            .addHeader("Token", Constants.roomToken)
+            .addHeader("Token", ConfigLoader.roomToken)
             .build()
 
         client.newCall(request).enqueue(object : Callback {
@@ -52,7 +51,10 @@ class RtmTokenUpdater(val context: Context) {
                     return
                 }
                 try {
-                    val token = gson.fromJson(response.body?.string(), JsonObject::class.java)["token"].asString
+                    val token = gson.fromJson(
+                        response.body?.string(),
+                        JsonObject::class.java
+                    )["token"].asString
                     cont.resume(token)
                 } catch (e: Exception) {
                     Log.e("RtmTokenUpdater", "parse token failed: $e")

@@ -5,12 +5,11 @@ import io.agora.board.forge.whiteboard.WhiteboardOption
 data class WhiteboardControllerConfig(
     val appId: String = "MainWhiteboard",
     val whiteboardOption: WhiteboardOption = defaultWhiteboardOption(),
-    val whiteboardAspectRatio: Float = 16f / 9f,
 ) {
     companion object {
         fun defaultWhiteboardOption() = WhiteboardOption(
-            width = 1080,
-            height = 1920,
+            width = 1920,
+            height = 1080,
         )
     }
 }

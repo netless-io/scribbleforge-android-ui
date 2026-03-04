@@ -1,7 +1,7 @@
 package io.agora.board.forge.ui.theme
 
 import io.agora.board.forge.ui.R
-import io.agora.board.forge.ui.ForgeUiToolType
+import io.agora.board.forge.ui.model.ForgeUiToolType
 
 class ForgeUiDefaultProvider : ForgeUiProvider {
     override fun toolIcon(toolType: ForgeUiToolType): Int = when (toolType) {

@@ -1,6 +1,6 @@
 package io.agora.board.forge.ui.whiteboard.state
 
-import io.agora.board.forge.ui.ForgeUiToolType
+import io.agora.board.forge.ui.model.ForgeUiToolType
 
 data class WhiteboardUiState(
     val drawState: DrawState,

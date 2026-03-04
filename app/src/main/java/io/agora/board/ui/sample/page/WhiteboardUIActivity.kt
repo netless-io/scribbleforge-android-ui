@@ -7,10 +7,12 @@ import io.agora.board.forge.RoomCallback
 import io.agora.board.forge.RoomError
 import io.agora.board.forge.RoomOptions
 import io.agora.board.forge.common.dev.FakeSocketProvider
+import io.agora.board.forge.rtm.RtmSocketProvider
 import io.agora.board.forge.ui.sample.databinding.ActivityWhiteboardUiBinding
 import io.agora.board.forge.ui.whiteboard.WhiteboardController
 import io.agora.board.forge.ui.whiteboard.WhiteboardControllerConfig
-import io.agora.board.ui.sample.Constants
+import io.agora.board.ui.sample.util.ConfigLoader
+import io.agora.board.ui.sample.util.RtmHelper
 
 /**
  * whiteboard ui activity
@@ -19,9 +21,10 @@ class WhiteboardUIActivity : BaseActivity<ActivityWhiteboardUiBinding>() {
     private lateinit var room: Room
     private lateinit var controller: WhiteboardController
 
-    private var currentWritable: Boolean = Constants.writable
+    private var currentWritable: Boolean = ConfigLoader.writable
 
-    override fun inflateBinding(inflater: LayoutInflater) = ActivityWhiteboardUiBinding.inflate(inflater)
+    override fun inflateBinding(inflater: LayoutInflater) =
+        ActivityWhiteboardUiBinding.inflate(inflater)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,15 +42,21 @@ class WhiteboardUIActivity : BaseActivity<ActivityWhiteboardUiBinding>() {
             })
         }
 
+        val socketProvider = if (RtmHelper.getInstance().isLogin()) {
+            RtmSocketProvider(RtmHelper.getInstance().rtmClient())
+        } else {
+            FakeSocketProvider()
+        }
+
         val roomOptions = RoomOptions(
             context = this,
-            roomId = Constants.roomId,
-            roomToken = Constants.roomToken,
-            userId = Constants.userId,
+            roomId = ConfigLoader.roomId,
+            roomToken = ConfigLoader.roomToken,
+            userId = ConfigLoader.userId,
         ).apply {
             writable(currentWritable)
-            socketProvider(FakeSocketProvider())
-            region(Constants.BOARD_REGION)
+            socketProvider(socketProvider)
+            region(ConfigLoader.boardRegion)
             appIdentifier("123/123")
         }
 

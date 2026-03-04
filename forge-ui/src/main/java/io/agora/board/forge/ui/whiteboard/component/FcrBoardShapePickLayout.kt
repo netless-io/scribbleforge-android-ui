@@ -13,7 +13,7 @@ import io.agora.board.forge.ui.R
 import io.agora.board.forge.ui.databinding.FcrBoardShapePickComponentBinding
 import io.agora.board.forge.ui.databinding.FcrBoardSubToolItemBinding
 import io.agora.board.forge.ui.internal.findForgeConfig
-import io.agora.board.forge.ui.ForgeUiToolType
+import io.agora.board.forge.ui.model.ForgeUiToolType
 
 
 /**

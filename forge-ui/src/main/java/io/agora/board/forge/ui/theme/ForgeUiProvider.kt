@@ -1,6 +1,6 @@
 package io.agora.board.forge.ui.theme
 
-import io.agora.board.forge.ui.ForgeUiToolType
+import io.agora.board.forge.ui.model.ForgeUiToolType
 
 interface ForgeUiProvider {
 

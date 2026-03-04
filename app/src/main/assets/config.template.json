@@ -1,0 +1,8 @@
+{
+  "forgeRoomId": "forge_room_id",
+  "forgeRoomToken": "forge_room_token",
+  "forgeRtmAppId": "forge_rtm_app_id",
+  "forgeRtmToken": "forge_rtm_token",
+  "forgeUserId": "forge_user_id",
+  "forgeRegionEndpoint": "forge_region_endpoint"
+}

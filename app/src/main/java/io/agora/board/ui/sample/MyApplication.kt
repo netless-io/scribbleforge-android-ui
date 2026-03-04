@@ -4,6 +4,7 @@ import android.app.Application
 import android.os.Build
 import android.webkit.WebView
 import com.tencent.bugly.crashreport.CrashReport
+import io.agora.board.ui.sample.util.ConfigLoader
 import io.agora.board.ui.sample.util.KvStore
 
 class MyApplication : Application() {
@@ -12,6 +13,7 @@ class MyApplication : Application() {
 
         WebView.setWebContentsDebuggingEnabled(true)
         KvStore.init(this)
+        ConfigLoader.init(this)
 
         if (!isRunningOnEmulator()) {
             CrashReport.initCrashReport(this, "876fa5c68c", true)
