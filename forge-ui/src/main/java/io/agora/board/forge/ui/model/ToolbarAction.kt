@@ -3,7 +3,7 @@ package io.agora.board.forge.ui.model
 /**
  * 白板工具箱操作类型（非绘图工具）
  */
-enum class ToolBoxAction {
+enum class ToolbarAction {
     /** 清除 */
     Clear,
 

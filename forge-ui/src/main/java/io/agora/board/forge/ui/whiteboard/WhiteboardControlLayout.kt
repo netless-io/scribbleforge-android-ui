@@ -22,13 +22,13 @@ import io.agora.board.forge.ui.internal.animateHide
 import io.agora.board.forge.ui.internal.animateShow
 import io.agora.board.forge.ui.internal.findForgeConfig
 import io.agora.board.forge.ui.internal.BitmapUtils
-import io.agora.board.forge.ui.whiteboard.component.FcrBoardBgPickLayout
-import io.agora.board.forge.ui.whiteboard.component.FcrBoardColorPickLayout
-import io.agora.board.forge.ui.whiteboard.component.FcrBoardShapePickLayout
-import io.agora.board.forge.ui.whiteboard.component.FcrBoardToolBoxLayout
+import io.agora.board.forge.ui.whiteboard.component.FcrBoardBackgroundPanel
+import io.agora.board.forge.ui.whiteboard.component.FcrBoardStrokePanel
+import io.agora.board.forge.ui.whiteboard.component.FcrBoardShapePanel
+import io.agora.board.forge.ui.whiteboard.component.FcrBoardToolbar
 import io.agora.board.forge.ui.whiteboard.component.FcrBoardUiDownloadingState
-import io.agora.board.forge.ui.model.ToolBoxItem
-import io.agora.board.forge.ui.model.ToolBoxAction
+import io.agora.board.forge.ui.model.ToolbarItem
+import io.agora.board.forge.ui.model.ToolbarAction
 import io.agora.board.forge.whiteboard.SimpleWhiteboardListener
 import io.agora.board.forge.whiteboard.WhiteboardApplication
 import io.agora.board.forge.whiteboard.WhiteboardToolInfo
@@ -88,17 +88,17 @@ class WhiteboardControlLayout @JvmOverloads constructor(
     }
 
     private fun setupToolBoxListener() {
-        val toolBoxListener = object : FcrBoardToolBoxLayout.ToolBoxListener {
-            override fun onToolBoxClick(item: ToolBoxItem, position: Int) {
+        val toolBoxListener = object : FcrBoardToolbar.ToolBoxListener {
+            override fun onToolBoxClick(item: ToolbarItem, position: Int) {
                 when (item) {
-                    is ToolBoxItem.Tool -> onToolClick(item)
-                    is ToolBoxItem.Action -> when (item.action) {
-                        ToolBoxAction.Clear -> onClearClick()
-                        ToolBoxAction.Stroke -> onColorPickClick()
-                        ToolBoxAction.Undo -> onUndoClick()
-                        ToolBoxAction.Redo -> onRedoClick()
-                        ToolBoxAction.Download -> onDownloadClick()
-                        ToolBoxAction.Background -> onBgPickClick()
+                    is ToolbarItem.Tool -> onToolClick(item)
+                    is ToolbarItem.Action -> when (item.action) {
+                        ToolbarAction.Clear -> onClearClick()
+                        ToolbarAction.Stroke -> onColorPickClick()
+                        ToolbarAction.Undo -> onUndoClick()
+                        ToolbarAction.Redo -> onRedoClick()
+                        ToolbarAction.Download -> onDownloadClick()
+                        ToolbarAction.Background -> onBgPickClick()
                     }
                 }
             }
@@ -109,7 +109,7 @@ class WhiteboardControlLayout @JvmOverloads constructor(
     }
 
     private fun setupStrokeSettingListener() {
-        val onStrokeSettingListener = object : FcrBoardColorPickLayout.OnStrokeSettingListener {
+        val onStrokeSettingListener = object : FcrBoardStrokePanel.OnStrokeSettingListener {
             override fun onStrokeWidthClick(width: Int) {
                 setStrokeWidth(width)
             }
@@ -124,7 +124,7 @@ class WhiteboardControlLayout @JvmOverloads constructor(
     }
 
     private fun setupShapePickListener() {
-        val shapePickListener = object : FcrBoardShapePickLayout.ShapePickListener {
+        val shapePickListener = object : FcrBoardShapePanel.ShapePickListener {
             override fun onToolClick(toolType: WhiteboardToolType) {
                 setToolType(toolType)
             }
@@ -135,7 +135,7 @@ class WhiteboardControlLayout @JvmOverloads constructor(
     }
 
     private fun setupBgPickLayout() {
-        val bgPickListener = object : FcrBoardBgPickLayout.BoardBgPickListener {
+        val bgPickListener = object : FcrBoardBackgroundPanel.BoardBgPickListener {
             override fun onBoardBgPicked(color: Int, toast: Int) {
                 syncBoardBackground(color) { success ->
                     if (success) {
@@ -204,7 +204,7 @@ class WhiteboardControlLayout @JvmOverloads constructor(
         whiteboardApp?.redo()
     }
 
-    private fun onToolClick(item: ToolBoxItem.Tool) {
+    private fun onToolClick(item: ToolbarItem.Tool) {
         if (item.tools.size > 1) {
             val open = layoutState.toolShown
             if (open) {

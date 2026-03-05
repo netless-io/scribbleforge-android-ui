@@ -11,7 +11,7 @@ import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
 import io.agora.board.forge.ui.R
-import io.agora.board.forge.ui.databinding.FcrBoardColorPickComponentBinding
+import io.agora.board.forge.ui.databinding.FcrBoardStrokePanelBinding
 import io.agora.board.forge.ui.internal.FoundationUtils
 import io.agora.board.forge.ui.theme.ForgeUiDefaults
 import io.agora.board.forge.ui.whiteboard.state.WhiteboardUiState
@@ -19,13 +19,13 @@ import io.agora.board.forge.ui.whiteboard.state.WhiteboardUiState
 /**
  * author : fenglibin
  * date : 2024/7/2
- * description : 白板工具属性选择面板
+ * description : Stroke 颜色+粗细面板
  */
-class FcrBoardColorPickLayout @JvmOverloads constructor(
+class FcrBoardStrokePanel @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
-    private val binding = FcrBoardColorPickComponentBinding.inflate(LayoutInflater.from(context), this, true)
+    private val binding = FcrBoardStrokePanelBinding.inflate(LayoutInflater.from(context), this, true)
     private val dots = listOf(binding.dot1, binding.dot2, binding.dot3)
     private val colors = listOf(binding.color1, binding.color2, binding.color3, binding.color4, binding.color5)
 
@@ -40,9 +40,9 @@ class FcrBoardColorPickLayout @JvmOverloads constructor(
     )
 
     init {
-        val orientation = context.obtainStyledAttributes(attrs, R.styleable.FcrBoardColorPickLayout).run {
+        val orientation = context.obtainStyledAttributes(attrs, R.styleable.FcrBoardStrokePanel).run {
             try {
-                getInt(R.styleable.FcrBoardColorPickLayout_fcr_layoutOrientation, FcrBoardToolBoxLayout.HORIZONTAL)
+                getInt(R.styleable.FcrBoardStrokePanel_fcr_layoutOrientation, FcrBoardToolbar.HORIZONTAL)
             } finally {
                 recycle()
             }
@@ -60,7 +60,7 @@ class FcrBoardColorPickLayout @JvmOverloads constructor(
         val panelSize = resources.getDimensionPixelSize(R.dimen.fcr_board_settings_panel_size)
 
         colorPickLayout.updateLayoutParams<LayoutParams> {
-            if (orientationMode == FcrBoardToolBoxLayout.HORIZONTAL) {
+            if (orientationMode == FcrBoardToolbar.HORIZONTAL) {
                 width = LayoutParams.WRAP_CONTENT
                 height = panelSize
                 colorPickLayout.apply {
@@ -86,7 +86,7 @@ class FcrBoardColorPickLayout @JvmOverloads constructor(
 
     private fun setupDivider(orientation: Int) {
         binding.divider.updateLayoutParams<LinearLayout.LayoutParams> {
-            if (orientation == FcrBoardToolBoxLayout.HORIZONTAL) {
+            if (orientation == FcrBoardToolbar.HORIZONTAL) {
                 width = resources.getDimensionPixelSize(R.dimen.fcr_v_divider_normal)
                 height = resources.getDimensionPixelSize(R.dimen.fcr_board_color_pick_divider_size)
             } else {
@@ -98,9 +98,7 @@ class FcrBoardColorPickLayout @JvmOverloads constructor(
 
     private fun setupDots() {
         dots.forEachIndexed { index, dotView ->
-            // setDotSize 仍然用 px
             dotView.setDotSize(FoundationUtils.dp2pxFloat(context, strokeWidths[index].toFloat()))
-            // onStrokeWidthClick 传 dp
             dotView.setOnClickListener { onStrokeSettingListener?.onStrokeWidthClick(strokeWidths[index]) }
         }
     }

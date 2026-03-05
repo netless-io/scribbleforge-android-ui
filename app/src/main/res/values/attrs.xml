@@ -28,7 +28,7 @@
         <attr name="progressTintColor" format="color" />
     </declare-styleable>
 
-    <declare-styleable name="FcrBoardStrokeWidthView">
+    <declare-styleable name="FcrBoardDotView">
         <attr name="dotColor" format="color" />
         <attr name="dotSize" format="dimension" />
         <attr name="circleColor" format="color" />

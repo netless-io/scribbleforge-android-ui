@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center_horizontal"
     app:fcr_layoutOrientation="horizontal"
-    tools:parentTag="io.agora.board.forge.ui.whiteboard.component.FcrBoardToolBoxLayout">
+    tools:parentTag="io.agora.board.forge.ui.whiteboard.component.FcrBoardToolbar">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_tool_box"
@@ -15,6 +15,6 @@
         android:layout_gravity="center"
         android:overScrollMode="never"
         tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/fcr_board_tool_box_item"
+        tools:listitem="@layout/fcr_board_tool_bar_item"
         tools:orientation="horizontal" />
 </merge>

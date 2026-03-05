@@ -4,13 +4,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import io.agora.board.forge.ui.databinding.FcrBoardToolBoxItemBinding
+import io.agora.board.forge.ui.databinding.FcrBoardToolBarItemBinding
 import io.agora.board.forge.ui.internal.FoundationUtils
 import io.agora.board.forge.ui.internal.findForgeConfigOrNull
-import io.agora.board.forge.ui.model.ToolBoxAction
-import io.agora.board.forge.ui.model.ToolBoxItem
-import io.agora.board.forge.ui.theme.ForgeUiProvider
+import io.agora.board.forge.ui.model.ToolbarAction
+import io.agora.board.forge.ui.model.ToolbarItem
 import io.agora.board.forge.ui.theme.ForgeUiDefaultProvider
+import io.agora.board.forge.ui.theme.ForgeUiProvider
 import io.agora.board.forge.ui.whiteboard.state.WhiteboardUiState
 
 /**
@@ -18,13 +18,13 @@ import io.agora.board.forge.ui.whiteboard.state.WhiteboardUiState
  * date : 2024/7/2
  * description : 白板工具属性选择面板适配器
  */
-class FcrBoardToolBoxAdapter(private var itemList: List<ToolBoxItem>) :
-    RecyclerView.Adapter<FcrBoardToolBoxAdapter.ViewHolder>() {
+class FcrBoardToolbarAdapter(private var itemList: List<ToolbarItem>) :
+    RecyclerView.Adapter<FcrBoardToolbarAdapter.ViewHolder>() {
 
     private var uiState: WhiteboardUiState? = null
     private var onItemClickListener: OnItemClickListener? = null
 
-    /** 由 FcrBoardToolBoxLayout 在 onAttachedToWindow 时注入，避免 item 尚未 attach 时 findForgeConfig 崩溃 */
+    /** 由 FcrBoardToolbar 在 onAttachedToWindow 时注入，避免 item 尚未 attach 时 findForgeConfig 崩溃 */
     var provider: ForgeUiProvider? = null
         set(value) {
             field = value
@@ -32,7 +32,8 @@ class FcrBoardToolBoxAdapter(private var itemList: List<ToolBoxItem>) :
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = FcrBoardToolBoxItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            FcrBoardToolBarItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
@@ -45,34 +46,41 @@ class FcrBoardToolBoxAdapter(private var itemList: List<ToolBoxItem>) :
             ?: fallbackProvider
 
         val iconResId = when (item) {
-            is ToolBoxItem.Tool -> {
+            is ToolbarItem.Tool -> {
                 val tool = item.tools.getOrNull(item.index) ?: item.tools.firstOrNull()
                 if (tool != null) provider.toolIcon(tool) else 0
             }
-            is ToolBoxItem.Action -> provider.toolActionIcon(item.action)
+
+            is ToolbarItem.Action -> provider.toolActionIcon(item.action)
         }
         binding.ivIcon.setImageResource(iconResId)
         binding.ivIcon.visibility = View.VISIBLE
         binding.vBackground.isSelected = item.isSelected
 
-        val isStrokeAction = item is ToolBoxItem.Action && item.action == ToolBoxAction.Stroke
+        val isStrokeAction = item is ToolbarItem.Action && item.action == ToolbarAction.Stroke
         if (isStrokeAction) {
             binding.flStroke.visibility = View.VISIBLE
             uiState?.let {
                 binding.strokeDot.setDotColor(it.strokeColor)
-                binding.strokeDot.setDotSize(FoundationUtils.dp2pxFloat(context, it.strokeWidth.toFloat()))
+                binding.strokeDot.setDotSize(
+                    FoundationUtils.dp2pxFloat(
+                        context,
+                        it.strokeWidth.toFloat()
+                    )
+                )
             }
         } else {
             binding.flStroke.visibility = View.GONE
         }
 
         val enabled = when (item) {
-            is ToolBoxItem.Action -> when (item.action) {
-                ToolBoxAction.Undo -> uiState?.undo ?: false
-                ToolBoxAction.Redo -> uiState?.redo ?: false
+            is ToolbarItem.Action -> when (item.action) {
+                ToolbarAction.Undo -> uiState?.undo ?: false
+                ToolbarAction.Redo -> uiState?.redo ?: false
                 else -> true
             }
-            is ToolBoxItem.Tool -> true
+
+            is ToolbarItem.Tool -> true
         }
         binding.ivIcon.alpha = if (enabled) 1f else 0.5f
         binding.ivIcon.isEnabled = enabled
@@ -82,7 +90,7 @@ class FcrBoardToolBoxAdapter(private var itemList: List<ToolBoxItem>) :
         }
     }
 
-    fun setItems(itemList: List<ToolBoxItem>) {
+    fun setItems(itemList: List<ToolbarItem>) {
         this.itemList = itemList
         notifyDataSetChanged()
     }
@@ -100,7 +108,8 @@ class FcrBoardToolBoxAdapter(private var itemList: List<ToolBoxItem>) :
         notifyDataSetChanged()
     }
 
-    class ViewHolder(val binding: FcrBoardToolBoxItemBinding) : RecyclerView.ViewHolder(binding.root)
+    class ViewHolder(val binding: FcrBoardToolBarItemBinding) :
+        RecyclerView.ViewHolder(binding.root)
 
     fun interface OnItemClickListener {
         fun onItemClick(position: Int)

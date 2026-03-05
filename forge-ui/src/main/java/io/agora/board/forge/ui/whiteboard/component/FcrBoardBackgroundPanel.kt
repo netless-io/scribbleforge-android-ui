@@ -9,17 +9,15 @@ import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import io.agora.board.forge.ui.R
-import io.agora.board.forge.ui.databinding.FcrBoardBgPickLayoutBinding
+import io.agora.board.forge.ui.databinding.FcrBoardBackgroundPanelBinding
 
 /**
- * author : fenglibin
- * date : 2024/8/9
- * description : 白板背景选择布局
+ * 背景选择面板
  */
-class FcrBoardBgPickLayout @JvmOverloads constructor(
+class FcrBoardBackgroundPanel @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : CardView(context, attrs, defStyleAttr) {
-    private val binding = FcrBoardBgPickLayoutBinding.inflate(LayoutInflater.from(context), this)
+    private val binding = FcrBoardBackgroundPanelBinding.inflate(LayoutInflater.from(context), this)
 
     private var listener: BoardBgPickListener? = null
 

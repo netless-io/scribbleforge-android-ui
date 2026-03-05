@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="FcrBoardStrokeWidthView">
+    <declare-styleable name="FcrBoardDotView">
         <attr name="dotColor" format="color" />
         <attr name="dotSize" format="dimension" />
         <attr name="circleColor" format="color" />
@@ -12,15 +12,15 @@
         <enum name="vertical" value="1" />
     </attr>
 
-    <declare-styleable name="FcrBoardToolBox">
+    <declare-styleable name="FcrBoardToolbar">
         <attr name="fcr_layoutOrientation" />
     </declare-styleable>
 
-    <declare-styleable name="FcrBoardShapePick">
+    <declare-styleable name="FcrBoardShapePanel">
         <attr name="fcr_layoutOrientation" />
     </declare-styleable>
 
-    <declare-styleable name="FcrBoardColorPickLayout">
+    <declare-styleable name="FcrBoardStrokePanel">
         <attr name="fcr_layoutOrientation" />
     </declare-styleable>
 </resources>

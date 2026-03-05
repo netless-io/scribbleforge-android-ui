@@ -34,12 +34,12 @@ class FcrBoardDotView @JvmOverloads constructor(
     }
 
     init {
-        context.obtainStyledAttributes(attrs, R.styleable.FcrBoardStrokeWidthView).apply {
+        context.obtainStyledAttributes(attrs, R.styleable.FcrBoardDotView).apply {
             try {
-                dotColor = getColor(R.styleable.FcrBoardStrokeWidthView_dotColor, Color.BLACK)
-                dotSize = getDimension(R.styleable.FcrBoardStrokeWidthView_dotSize, 10f)
-                circleColor = getColor(R.styleable.FcrBoardStrokeWidthView_circleColor, Color.CYAN)
-                circleWidth = getDimension(R.styleable.FcrBoardStrokeWidthView_circleWidth, 2f)
+                dotColor = getColor(R.styleable.FcrBoardDotView_dotColor, Color.BLACK)
+                dotSize = getDimension(R.styleable.FcrBoardDotView_dotSize, 10f)
+                circleColor = getColor(R.styleable.FcrBoardDotView_circleColor, Color.CYAN)
+                circleWidth = getDimension(R.styleable.FcrBoardDotView_circleWidth, 2f)
             } finally {
                 recycle()
             }

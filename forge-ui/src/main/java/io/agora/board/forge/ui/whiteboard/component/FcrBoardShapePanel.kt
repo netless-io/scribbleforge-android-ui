@@ -10,32 +10,31 @@ import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import io.agora.board.forge.ui.R
-import io.agora.board.forge.ui.databinding.FcrBoardShapePickComponentBinding
+import io.agora.board.forge.ui.databinding.FcrBoardShapePanelBinding
 import io.agora.board.forge.ui.databinding.FcrBoardSubToolItemBinding
 import io.agora.board.forge.ui.internal.findForgeConfig
 import io.agora.board.forge.whiteboard.WhiteboardToolType
 
-
 /**
  * author : fenglibin
  * date : 2024/5/27
- * description : 白板形状选择
+ * description : 形状选择面板
  */
-class FcrBoardShapePickLayout @JvmOverloads constructor(
+class FcrBoardShapePanel @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
-    private val binding = FcrBoardShapePickComponentBinding.inflate(LayoutInflater.from(context), this, true)
+    private val binding = FcrBoardShapePanelBinding.inflate(LayoutInflater.from(context), this, true)
     private var toolList = listOf<WhiteboardToolType>()
     private var selectedTool = WhiteboardToolType.CURVE
     private var shapePickListener: ShapePickListener? = null
     private var layoutOrientation: Int
 
     init {
-        context.obtainStyledAttributes(attrs, R.styleable.FcrBoardShapePick).apply {
+        context.obtainStyledAttributes(attrs, R.styleable.FcrBoardShapePanel).apply {
             try {
                 layoutOrientation = getInt(
-                    R.styleable.FcrBoardShapePick_fcr_layoutOrientation, FcrBoardToolBoxLayout.HORIZONTAL
+                    R.styleable.FcrBoardShapePanel_fcr_layoutOrientation, FcrBoardToolbar.HORIZONTAL
                 )
             } finally {
                 recycle()
@@ -46,7 +45,7 @@ class FcrBoardShapePickLayout @JvmOverloads constructor(
     }
 
     private fun setupShapeLayout(context: Context) {
-        val isHorizontal = layoutOrientation == FcrBoardToolBoxLayout.HORIZONTAL
+        val isHorizontal = layoutOrientation == FcrBoardToolbar.HORIZONTAL
         val padding = resources.getDimensionPixelSize(R.dimen.fcr_board_shape_pick_padding_main)
         val panelSize = resources.getDimensionPixelSize(R.dimen.fcr_board_settings_panel_size)
 
