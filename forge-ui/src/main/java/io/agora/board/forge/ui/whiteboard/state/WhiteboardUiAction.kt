@@ -1,10 +1,10 @@
 package io.agora.board.forge.ui.whiteboard.state
 
-import io.agora.board.forge.ui.model.ForgeUiToolType
+import io.agora.board.forge.whiteboard.WhiteboardToolType
 
 sealed interface WhiteboardUiAction {
     // 工具
-    data class ChangeTool(val tool: ForgeUiToolType) : WhiteboardUiAction
+    data class ChangeTool(val tool: WhiteboardToolType) : WhiteboardUiAction
     data class ChangeStrokeColor(val color: Int) : WhiteboardUiAction
     data class ChangeStrokeWidth(val width: Int) : WhiteboardUiAction
     data class ChangeBackground(val color: Int) : WhiteboardUiAction
@@ -26,6 +26,6 @@ sealed interface WhiteboardUiAction {
     data object DownloadFailed : WhiteboardUiAction
 
     // SDK 回调同步
-    data class SyncToolFromWhiteboard(val tool: ForgeUiToolType) : WhiteboardUiAction
+    data class SyncToolFromWhiteboard(val tool: WhiteboardToolType) : WhiteboardUiAction
     data class WritableChanged(val writable: Boolean) : WhiteboardUiAction
 }

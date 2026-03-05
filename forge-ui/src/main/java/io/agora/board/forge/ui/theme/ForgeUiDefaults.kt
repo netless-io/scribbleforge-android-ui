@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.core.content.ContextCompat
 import io.agora.board.forge.ui.R
 import io.agora.board.forge.ui.whiteboard.state.DrawState
-import io.agora.board.forge.ui.model.ForgeUiToolType
+import io.agora.board.forge.whiteboard.WhiteboardToolType
 
 object ForgeUiDefaults {
     val strokeColors = listOf(
@@ -26,7 +26,7 @@ object ForgeUiDefaults {
 
     fun defaultDrawState(context: Context): DrawState {
         return DrawState(
-            toolType = ForgeUiToolType.CURVE,
+            toolType = WhiteboardToolType.CURVE,
             strokeWidth = strokeWidths[0],
             strokeColor = ContextCompat.getColor(context, strokeColors[strokeIndex]),
             backgroundColor = ContextCompat.getColor(context, R.color.fcr_whiteboard_bg_white),

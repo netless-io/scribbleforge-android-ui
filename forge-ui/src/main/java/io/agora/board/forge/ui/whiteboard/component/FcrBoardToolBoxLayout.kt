@@ -15,7 +15,7 @@ import io.agora.board.forge.ui.R
 import io.agora.board.forge.ui.databinding.FcrBoardToolBoxComponentBinding
 import io.agora.board.forge.ui.whiteboard.state.DrawState
 import io.agora.board.forge.ui.internal.findForgeConfig
-import io.agora.board.forge.ui.model.ForgeUiToolType
+import io.agora.board.forge.whiteboard.WhiteboardToolType
 import kotlin.collections.indexOf
 
 /**
@@ -55,42 +55,42 @@ class FcrBoardToolBoxLayout @JvmOverloads constructor(
         ToolBoxItem(
             FcrBoardToolBoxType.Tool,
             R.mipmap.fcr_whiteboard_pen1,
-            listOf(ForgeUiToolType.CURVE)
+            listOf(WhiteboardToolType.CURVE)
         ),
         ToolBoxItem(
             FcrBoardToolBoxType.Tool,
             R.mipmap.fcr_whiteboard_laserpen2,
-            listOf(ForgeUiToolType.LASER_POINTER)
+            listOf(WhiteboardToolType.LASER)
         ),
         ToolBoxItem(
             FcrBoardToolBoxType.Tool, R.mipmap.fcr_whiteboard_shap_square, listOf(
-                ForgeUiToolType.RECTANGLE,
-                ForgeUiToolType.TRIANGLE,
-                ForgeUiToolType.ELLIPSE,
-                ForgeUiToolType.STRAIGHT,
-                ForgeUiToolType.ARROW,
+                WhiteboardToolType.RECTANGLE,
+                WhiteboardToolType.TRIANGLE,
+                WhiteboardToolType.ELLIPSE,
+                WhiteboardToolType.LINE,
+                WhiteboardToolType.ARROW,
             )
         ),
         ToolBoxItem(
             FcrBoardToolBoxType.Tool,
             R.drawable.fcr_ic_tool_clicker,
-            listOf(ForgeUiToolType.CLICKER, ForgeUiToolType.HAND)
+            listOf(WhiteboardToolType.POINTER, WhiteboardToolType.GRAB)
         ),
         ToolBoxItem(
             FcrBoardToolBoxType.Tool,
             R.mipmap.fcr_whiteboard_whitechoose,
-            listOf(ForgeUiToolType.SELECTOR)
+            listOf(WhiteboardToolType.SELECTOR)
         ),
         ToolBoxItem(
             FcrBoardToolBoxType.Tool,
             R.mipmap.fcr_mobile_whiteboard_eraser,
-            listOf(ForgeUiToolType.ERASER)
+            listOf(WhiteboardToolType.ERASER)
         ),
         ToolBoxItem(FcrBoardToolBoxType.Stroke, 0),
         ToolBoxItem(
             FcrBoardToolBoxType.Tool,
             R.mipmap.fcr_mobile_whiteboard_text,
-            listOf(ForgeUiToolType.TEXT)
+            listOf(WhiteboardToolType.TEXT)
         ),
         ToolBoxItem(FcrBoardToolBoxType.Download, R.mipmap.fcr_download),
         ToolBoxItem(FcrBoardToolBoxType.Background, R.mipmap.fcr_whiteboard_bg),
@@ -222,7 +222,7 @@ class FcrBoardToolBoxLayout @JvmOverloads constructor(
 data class ToolBoxItem(
     val type: FcrBoardToolBoxType,
     var iconResId: Int,
-    val tools: List<ForgeUiToolType> = listOf(),
+    val tools: List<WhiteboardToolType> = listOf(),
     var index: Int = 0,
     var isSelected: Boolean = false,
 )

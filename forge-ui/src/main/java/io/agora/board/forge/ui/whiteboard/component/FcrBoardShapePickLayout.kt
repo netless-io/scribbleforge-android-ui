@@ -13,7 +13,7 @@ import io.agora.board.forge.ui.R
 import io.agora.board.forge.ui.databinding.FcrBoardShapePickComponentBinding
 import io.agora.board.forge.ui.databinding.FcrBoardSubToolItemBinding
 import io.agora.board.forge.ui.internal.findForgeConfig
-import io.agora.board.forge.ui.model.ForgeUiToolType
+import io.agora.board.forge.whiteboard.WhiteboardToolType
 
 
 /**
@@ -26,8 +26,8 @@ class FcrBoardShapePickLayout @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
     private val binding = FcrBoardShapePickComponentBinding.inflate(LayoutInflater.from(context), this, true)
-    private var toolList = listOf<ForgeUiToolType>()
-    private var selectedTool = ForgeUiToolType.CURVE
+    private var toolList = listOf<WhiteboardToolType>()
+    private var selectedTool = WhiteboardToolType.CURVE
     private var shapePickListener: ShapePickListener? = null
     private var layoutOrientation: Int
 
@@ -71,7 +71,7 @@ class FcrBoardShapePickLayout @JvmOverloads constructor(
         binding.llShapeLayout.showDividers = LinearLayout.SHOW_DIVIDER_MIDDLE
     }
 
-    fun setTools(toolTypes: List<ForgeUiToolType>) {
+    fun setTools(toolTypes: List<WhiteboardToolType>) {
         if (toolList != toolTypes) {
             toolList = toolTypes
             rebuildToolLayout()
@@ -87,7 +87,7 @@ class FcrBoardShapePickLayout @JvmOverloads constructor(
         }
     }
 
-    private fun createToolItemView(toolType: ForgeUiToolType): View {
+    private fun createToolItemView(toolType: WhiteboardToolType): View {
         val toolItemBinding = FcrBoardSubToolItemBinding.inflate(
             LayoutInflater.from(context), this, false
         )
@@ -97,7 +97,7 @@ class FcrBoardShapePickLayout @JvmOverloads constructor(
         return toolItemBinding.root
     }
 
-    fun selectTool(toolType: ForgeUiToolType) {
+    fun selectTool(toolType: WhiteboardToolType) {
         selectedTool = toolType
         updateSelectedTool()
     }
@@ -109,7 +109,7 @@ class FcrBoardShapePickLayout @JvmOverloads constructor(
     }
 
     interface ShapePickListener {
-        fun onToolClick(toolType: ForgeUiToolType)
+        fun onToolClick(toolType: WhiteboardToolType)
     }
 
     fun setShapePickListener(listener: ShapePickListener) {

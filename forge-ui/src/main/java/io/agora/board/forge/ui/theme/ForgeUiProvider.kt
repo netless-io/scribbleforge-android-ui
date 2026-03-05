@@ -1,12 +1,12 @@
 package io.agora.board.forge.ui.theme
 
-import io.agora.board.forge.ui.model.ForgeUiToolType
+import io.agora.board.forge.whiteboard.WhiteboardToolType
 
 interface ForgeUiProvider {
 
-    fun toolIcon(toolType: ForgeUiToolType): Int
+    fun toolIcon(toolType: WhiteboardToolType): Int
 
-    fun toolToast(toolType: ForgeUiToolType): Int
+    fun toolToast(toolType: WhiteboardToolType): Int
 
     fun defaultStrokeWidth(): Int = 4
 

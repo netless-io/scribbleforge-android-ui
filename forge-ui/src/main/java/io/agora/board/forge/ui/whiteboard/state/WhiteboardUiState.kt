@@ -1,6 +1,6 @@
 package io.agora.board.forge.ui.whiteboard.state
 
-import io.agora.board.forge.ui.model.ForgeUiToolType
+import io.agora.board.forge.whiteboard.WhiteboardToolType
 
 data class WhiteboardUiState(
     val drawState: DrawState,
@@ -9,7 +9,7 @@ data class WhiteboardUiState(
 )
 
 data class DrawState(
-    val toolType: ForgeUiToolType,
+    val toolType: WhiteboardToolType,
     val strokeWidth: Int,
     val strokeColor: Int,
     val fontSize: Float = 32f,
