@@ -8,9 +8,7 @@ import kotlinx.coroutines.flow.update
 
 class WhiteboardStateStore(context: Context) {
 
-    private val _state = MutableStateFlow(
-        ForgeUiDefaults.defaultDrawState(context).toWhiteboardUiState()
-    )
+    private val _state = MutableStateFlow(ForgeUiDefaults.defaultWhiteboardUiState(context))
 
     val state: StateFlow<WhiteboardUiState> = _state
 
@@ -26,10 +24,8 @@ class WhiteboardStateStore(context: Context) {
             is WhiteboardUiAction.ChangeStrokeColor -> old.copy(strokeColor = action.color)
             is WhiteboardUiAction.ChangeStrokeWidth -> old.copy(strokeWidth = action.width)
             is WhiteboardUiAction.ChangeBackground -> old.copy(backgroundColor = action.color)
-            is WhiteboardUiAction.UpdateUndoRedo -> old.copy(
-                undo = action.undo,
-                redo = action.redo
-            )
+            is WhiteboardUiAction.UpdateUndoRedo -> old.copy(undo = action.undo, redo = action.redo)
+            
             is WhiteboardUiAction.WritableChanged -> old.copy(canDraw = action.writable)
         }
     }

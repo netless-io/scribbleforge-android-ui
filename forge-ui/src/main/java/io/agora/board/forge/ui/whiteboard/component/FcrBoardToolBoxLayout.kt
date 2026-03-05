@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import io.agora.board.forge.ui.R
 import io.agora.board.forge.ui.databinding.FcrBoardToolBoxComponentBinding
-import io.agora.board.forge.ui.whiteboard.state.DrawState
+import io.agora.board.forge.ui.whiteboard.state.WhiteboardUiState
 import io.agora.board.forge.ui.internal.findForgeConfigOrNull
 import io.agora.board.forge.ui.model.ToolBoxAction
 import io.agora.board.forge.ui.model.ToolBoxItem
@@ -73,7 +73,7 @@ class FcrBoardToolBoxLayout @JvmOverloads constructor(
         }
 
     private var toolBoxListener: ToolBoxListener? = null
-    private var drawState: DrawState? = null
+    private var uiState: WhiteboardUiState? = null
 
     init {
         context.obtainStyledAttributes(attrs, R.styleable.FcrBoardToolBox).apply {
@@ -128,17 +128,17 @@ class FcrBoardToolBoxLayout @JvmOverloads constructor(
         toolBoxListener = listener
     }
 
-    fun setDrawConfig(drawState: DrawState) {
-        this.drawState = drawState
-        updateDrawConfig()
+    fun setUiState(state: WhiteboardUiState) {
+        this.uiState = state
+        applyUiState()
     }
 
-    private fun updateDrawConfig() {
-        val drawConfig = drawState ?: return
+    private fun applyUiState() {
+        val state = uiState ?: return
         toolBoxItems.forEach { item ->
             when (item) {
                 is ToolBoxItem.Tool -> {
-                    val indexOf = item.tools.indexOf(drawConfig.toolType)
+                    val indexOf = item.tools.indexOf(state.toolType)
                     if (indexOf >= 0) {
                         item.index = indexOf
                     }
@@ -148,7 +148,7 @@ class FcrBoardToolBoxLayout @JvmOverloads constructor(
                 }
             }
         }
-        toolBoxAdapter.setDrawConfig(drawConfig)
+        toolBoxAdapter.setUiState(state)
     }
 
     fun setSelectionType(

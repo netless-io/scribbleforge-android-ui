@@ -14,7 +14,7 @@ import io.agora.board.forge.ui.R
 import io.agora.board.forge.ui.databinding.FcrBoardColorPickComponentBinding
 import io.agora.board.forge.ui.internal.FoundationUtils
 import io.agora.board.forge.ui.theme.ForgeUiDefaults
-import io.agora.board.forge.ui.whiteboard.state.DrawState
+import io.agora.board.forge.ui.whiteboard.state.WhiteboardUiState
 
 /**
  * author : fenglibin
@@ -124,13 +124,13 @@ class FcrBoardColorPickLayout @JvmOverloads constructor(
         this.onStrokeSettingListener = listener
     }
 
-    fun setDrawConfig(drawState: DrawState) {
+    fun setUiState(state: WhiteboardUiState) {
         dots.forEachIndexed { index, fcrBoardDotView ->
-            fcrBoardDotView.isSelected = strokeWidths[index] == drawState.strokeWidth
+            fcrBoardDotView.isSelected = strokeWidths[index] == state.strokeWidth
         }
 
         colors.forEachIndexed { index, imageView ->
-            imageView.isSelected = strokeColors[index] == drawState.strokeColor
+            imageView.isSelected = strokeColors[index] == state.strokeColor
         }
     }
 }

@@ -14,40 +14,4 @@ data class WhiteboardUiState(
     val undo: Boolean = false,
     val redo: Boolean = false,
     val canDraw: Boolean = true
-) {
-    fun toDrawState(): DrawState = DrawState(
-        toolType = toolType,
-        strokeWidth = strokeWidth,
-        strokeColor = strokeColor,
-        fontSize = fontSize,
-        backgroundColor = backgroundColor,
-        undo = undo,
-        redo = redo,
-        canDraw = canDraw
-    )
-}
-
-/**
- * 供子组件（ToolBox、ColorPick 等）使用的绘制配置视图。
- */
-data class DrawState(
-    val toolType: WhiteboardToolType,
-    val strokeWidth: Int,
-    val strokeColor: Int,
-    val fontSize: Float = 32f,
-    val backgroundColor: Int,
-    val undo: Boolean = false,
-    val redo: Boolean = false,
-    val canDraw: Boolean = true
-) {
-    fun toWhiteboardUiState(): WhiteboardUiState = WhiteboardUiState(
-        toolType = toolType,
-        strokeWidth = strokeWidth,
-        strokeColor = strokeColor,
-        fontSize = fontSize,
-        backgroundColor = backgroundColor,
-        undo = undo,
-        redo = redo,
-        canDraw = canDraw
-    )
-}
+)

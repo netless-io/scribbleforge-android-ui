@@ -11,7 +11,7 @@ import io.agora.board.forge.ui.model.ToolBoxAction
 import io.agora.board.forge.ui.model.ToolBoxItem
 import io.agora.board.forge.ui.theme.ForgeUiProvider
 import io.agora.board.forge.ui.theme.ForgeUiDefaultProvider
-import io.agora.board.forge.ui.whiteboard.state.DrawState
+import io.agora.board.forge.ui.whiteboard.state.WhiteboardUiState
 
 /**
  * author : fenglibin
@@ -21,7 +21,7 @@ import io.agora.board.forge.ui.whiteboard.state.DrawState
 class FcrBoardToolBoxAdapter(private var itemList: List<ToolBoxItem>) :
     RecyclerView.Adapter<FcrBoardToolBoxAdapter.ViewHolder>() {
 
-    private var drawState: DrawState? = null
+    private var uiState: WhiteboardUiState? = null
     private var onItemClickListener: OnItemClickListener? = null
 
     /** 由 FcrBoardToolBoxLayout 在 onAttachedToWindow 时注入，避免 item 尚未 attach 时 findForgeConfig 崩溃 */
@@ -58,7 +58,7 @@ class FcrBoardToolBoxAdapter(private var itemList: List<ToolBoxItem>) :
         val isStrokeAction = item is ToolBoxItem.Action && item.action == ToolBoxAction.Stroke
         if (isStrokeAction) {
             binding.flStroke.visibility = View.VISIBLE
-            drawState?.let {
+            uiState?.let {
                 binding.strokeDot.setDotColor(it.strokeColor)
                 binding.strokeDot.setDotSize(FoundationUtils.dp2pxFloat(context, it.strokeWidth.toFloat()))
             }
@@ -68,8 +68,8 @@ class FcrBoardToolBoxAdapter(private var itemList: List<ToolBoxItem>) :
 
         val enabled = when (item) {
             is ToolBoxItem.Action -> when (item.action) {
-                ToolBoxAction.Undo -> drawState?.undo ?: false
-                ToolBoxAction.Redo -> drawState?.redo ?: false
+                ToolBoxAction.Undo -> uiState?.undo ?: false
+                ToolBoxAction.Redo -> uiState?.redo ?: false
                 else -> true
             }
             is ToolBoxItem.Tool -> true
@@ -95,8 +95,8 @@ class FcrBoardToolBoxAdapter(private var itemList: List<ToolBoxItem>) :
         onItemClickListener = listener
     }
 
-    fun setDrawConfig(drawState: DrawState) {
-        this.drawState = drawState
+    fun setUiState(state: WhiteboardUiState) {
+        this.uiState = state
         notifyDataSetChanged()
     }
 

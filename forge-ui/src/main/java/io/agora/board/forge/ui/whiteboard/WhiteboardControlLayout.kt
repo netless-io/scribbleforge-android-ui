@@ -15,7 +15,6 @@ import io.agora.board.forge.ui.internal.DeviceOrientation
 import io.agora.board.forge.ui.internal.ForgeProgressCallback
 import io.agora.board.forge.ui.R
 import io.agora.board.forge.ui.common.ext.ForgeToast
-import io.agora.board.forge.ui.whiteboard.state.DrawState
 import io.agora.board.forge.ui.whiteboard.state.WhiteboardStateStore
 import io.agora.board.forge.ui.whiteboard.state.WhiteboardUiAction
 import io.agora.board.forge.ui.whiteboard.state.WhiteboardUiState
@@ -78,7 +77,7 @@ class WhiteboardControlLayout @JvmOverloads constructor(
     }
 
     private fun render(state: WhiteboardUiState) {
-        updateDrawSettings(state.toDrawState())
+        applyUiState(state)
         updateToolboxSelection(layoutState, state.toolType)
     }
 
@@ -408,31 +407,31 @@ class WhiteboardControlLayout @JvmOverloads constructor(
     }
 
     /**
-     * 更新绘制设置
+     * 将 WhiteboardUiState 应用到子视图（工具箱、颜色选择、形状选择、背景等）
      */
-    private fun updateDrawSettings(drawState: DrawState) {
+    private fun applyUiState(state: WhiteboardUiState) {
         binding.phonePortLayout.run {
-            boardToolBox.setDrawConfig(drawState)
-            boardColorPickLayout.setDrawConfig(drawState)
-            boardShapePickLayout.selectTool(drawState.toolType)
-            boardBgPickLayout.setBoardBackgroundColor(drawState.backgroundColor)
+            boardToolBox.setUiState(state)
+            boardColorPickLayout.setUiState(state)
+            boardShapePickLayout.selectTool(state.toolType)
+            boardBgPickLayout.setBoardBackgroundColor(state.backgroundColor)
         }
 
         binding.phoneLoadLayout.run {
-            boardToolBox.setDrawConfig(drawState)
-            boardColorPickLayout.setDrawConfig(drawState)
-            boardShapePickLayout.selectTool(drawState.toolType)
-            boardBgPickLayout.setBoardBackgroundColor(drawState.backgroundColor)
+            boardToolBox.setUiState(state)
+            boardColorPickLayout.setUiState(state)
+            boardShapePickLayout.selectTool(state.toolType)
+            boardBgPickLayout.setBoardBackgroundColor(state.backgroundColor)
         }
 
         binding.tabletLayout.run {
-            boardToolBox.setDrawConfig(drawState)
-            boardColorPickLayout.setDrawConfig(drawState)
-            boardShapePickLayout.selectTool(drawState.toolType)
-            boardBgPickLayout.setBoardBackgroundColor(drawState.backgroundColor)
+            boardToolBox.setUiState(state)
+            boardColorPickLayout.setUiState(state)
+            boardShapePickLayout.selectTool(state.toolType)
+            boardBgPickLayout.setBoardBackgroundColor(state.backgroundColor)
         }
 
-        if (drawState.canDraw) {
+        if (state.canDraw) {
             setUiEditMode(true)
         } else {
             setUiEditMode(false)

@@ -3,7 +3,7 @@ package io.agora.board.forge.ui.theme
 import android.content.Context
 import androidx.core.content.ContextCompat
 import io.agora.board.forge.ui.R
-import io.agora.board.forge.ui.whiteboard.state.DrawState
+import io.agora.board.forge.ui.whiteboard.state.WhiteboardUiState
 import io.agora.board.forge.whiteboard.WhiteboardToolType
 
 object ForgeUiDefaults {
@@ -24,8 +24,8 @@ object ForgeUiDefaults {
         2, 4, 6
     )
 
-    fun defaultDrawState(context: Context): DrawState {
-        return DrawState(
+    fun defaultWhiteboardUiState(context: Context): WhiteboardUiState {
+        return WhiteboardUiState(
             toolType = WhiteboardToolType.CURVE,
             strokeWidth = strokeWidths[0],
             strokeColor = ContextCompat.getColor(context, strokeColors[strokeIndex]),
