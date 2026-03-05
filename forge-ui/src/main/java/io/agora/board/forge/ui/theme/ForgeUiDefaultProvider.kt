@@ -45,8 +45,4 @@ class ForgeUiDefaultProvider : ForgeUiProvider {
         WhiteboardToolType.GRAB -> R.string.fcr_board_toast_hand
         else -> 0
     }
-
-    override fun defaultStrokeColor(): Int {
-        return 0
-    }
 }

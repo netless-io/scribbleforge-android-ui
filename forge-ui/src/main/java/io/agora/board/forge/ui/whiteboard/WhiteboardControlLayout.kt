@@ -16,7 +16,6 @@ import io.agora.board.forge.ui.internal.ForgeProgressCallback
 import io.agora.board.forge.ui.R
 import io.agora.board.forge.ui.common.ext.ForgeToast
 import io.agora.board.forge.ui.whiteboard.state.DrawState
-import io.agora.board.forge.ui.whiteboard.state.LayoutState
 import io.agora.board.forge.ui.whiteboard.state.WhiteboardStateStore
 import io.agora.board.forge.ui.whiteboard.state.WhiteboardUiAction
 import io.agora.board.forge.ui.whiteboard.state.WhiteboardUiState
@@ -60,6 +59,10 @@ class WhiteboardControlLayout @JvmOverloads constructor(
 
     private val store = WhiteboardStateStore(context)
 
+    private var layoutState = LayoutState()
+
+    private var isDownloading = false
+
     init {
         mainScope.launch {
             store.state.collect { state ->
@@ -75,9 +78,14 @@ class WhiteboardControlLayout @JvmOverloads constructor(
     }
 
     private fun render(state: WhiteboardUiState) {
-        updateDrawSettings(state.drawState)
-        updateFloatLayouts(state.layoutState)
-        updateToolboxSelection(state.layoutState)
+        updateDrawSettings(state.toDrawState())
+        updateToolboxSelection(layoutState, state.toolType)
+    }
+
+    private fun applyLayoutState(block: LayoutState.() -> LayoutState) {
+        layoutState = block(layoutState)
+        updateFloatLayouts(layoutState)
+        updateToolboxSelection(layoutState, store.state.value.toolType)
     }
 
     private fun setupToolBoxListener() {
@@ -136,7 +144,7 @@ class WhiteboardControlLayout @JvmOverloads constructor(
                         setBoardBackgroundColor(color)
                     }
                 }
-                store.dispatch(WhiteboardUiAction.HideBgPanel)
+                applyLayoutState { copy(bgPickShown = false) }
             }
         }
         listOf(
@@ -151,7 +159,7 @@ class WhiteboardControlLayout @JvmOverloads constructor(
             store.dispatch(
                 WhiteboardUiAction.UpdateUndoRedo(
                     undo = length > 0,
-                    redo = store.state.value.drawState.redo
+                    redo = store.state.value.redo
                 )
             )
         }
@@ -159,7 +167,7 @@ class WhiteboardControlLayout @JvmOverloads constructor(
         override fun onRedoStackLengthUpdate(whiteboard: WhiteboardApplication, length: Int) {
             store.dispatch(
                 WhiteboardUiAction.UpdateUndoRedo(
-                    undo = store.state.value.drawState.undo,
+                    undo = store.state.value.undo,
                     redo = length > 0
                 )
             )
@@ -199,29 +207,28 @@ class WhiteboardControlLayout @JvmOverloads constructor(
 
     private fun onToolClick(item: ToolBoxItem.Tool) {
         if (item.tools.size > 1) {
-            val open = store.state.value.layoutState.toolShown
+            val open = layoutState.toolShown
             if (open) {
-                store.dispatch(WhiteboardUiAction.ToggleToolPanel)
+                applyLayoutState { copy(toolShown = false, strokeShown = false, downloadShown = false, bgPickShown = false) }
             } else {
-                store.dispatch(WhiteboardUiAction.ShowToolPanel)
+                applyLayoutState { copy(toolShown = true, strokeShown = false, downloadShown = false, bgPickShown = false) }
                 setToolType(item.tools[item.index])
             }
             binding.phonePortLayout.boardShapePickLayout.setTools(item.tools)
             binding.phoneLoadLayout.boardShapePickLayout.setTools(item.tools)
             binding.tabletLayout.boardShapePickLayout.setTools(item.tools)
         } else {
-            store.dispatch(WhiteboardUiAction.HideAllPanel)
+            applyLayoutState { copy(toolShown = false, strokeShown = false, downloadShown = false, bgPickShown = false) }
             setToolType(item.tools[0])
         }
     }
 
     private fun onColorPickClick() {
-        val current = store.state.value.layoutState.strokeShown
+        val current = layoutState.strokeShown
         if (!current) {
             showToolBoxToast(R.string.fcr_board_toast_change_color)
         }
-
-        store.dispatch(WhiteboardUiAction.ToggleStrokePanel)
+        applyLayoutState { copy(strokeShown = !strokeShown, toolShown = false, downloadShown = false, bgPickShown = false) }
     }
 
     private fun onDownloadClick() {
@@ -229,12 +236,13 @@ class WhiteboardControlLayout @JvmOverloads constructor(
     }
 
     private fun performDownload() {
-        if (!store.state.value.layoutState.downloadShown) {
-            store.dispatch(WhiteboardUiAction.ToggleDownloadPanel)
+        if (!layoutState.downloadShown) {
+            applyLayoutState { copy(downloadShown = true, toolShown = false, strokeShown = false, bgPickShown = false) }
         }
 
-        if (store.state.value.isDownloading) return
-        store.dispatch(WhiteboardUiAction.StartDownloading)
+        if (isDownloading) return
+        isDownloading = true
+        setDownloadLayoutVisible(true)
         downloadHideJob?.cancel()
 
         val downloadLayout = when (DeviceOrientation.Companion.get(context)) {
@@ -255,40 +263,47 @@ class WhiteboardControlLayout @JvmOverloads constructor(
                         val bitmap = withContext(Dispatchers.IO) {
                             BitmapUtils.combineBitmapsVertically(res.toList())
                         }
-                        bitmap?.let {
+                        if (bitmap != null) {
                             val imageName = "board_${System.currentTimeMillis()}"
-                            val result = BitmapUtils.saveToGallery(context, it, imageName)
+                            val result = BitmapUtils.saveToGallery(context, bitmap, imageName)
                             if (result == BitmapUtils.SUCCESS) {
                                 downloadLayout.setDownloadState(FcrBoardUiDownloadingState.SUCCESS)
-                                downloadHideJob = launch {
-                                    delay(1500)
-                                    store.dispatch(WhiteboardUiAction.HideDownloadPanel)
-                                }
                             } else {
                                 downloadLayout.setDownloadState(FcrBoardUiDownloadingState.FAILURE)
                             }
+                        } else {
+                            downloadLayout.setDownloadState(FcrBoardUiDownloadingState.FAILURE)
                         }
                     } catch (e: Exception) {
                         downloadLayout.setDownloadState(FcrBoardUiDownloadingState.FAILURE)
                     } finally {
-                        store.dispatch(WhiteboardUiAction.FinishDownloading)
+                        scheduleHideDownloadPanel()
                     }
                 }
             }
 
             override fun onFailure(error: Exception) {
                 downloadLayout.setDownloadState(FcrBoardUiDownloadingState.FAILURE)
-                store.dispatch(WhiteboardUiAction.FinishDownloading)
+                scheduleHideDownloadPanel()
             }
         })
     }
 
+    private fun scheduleHideDownloadPanel() {
+        downloadHideJob?.cancel()
+        downloadHideJob = mainScope.launch {
+            delay(1500)
+            isDownloading = false
+            applyLayoutState { copy(downloadShown = false) }
+        }
+    }
+
     private fun onBgPickClick() {
-        store.dispatch(WhiteboardUiAction.ToggleBgPanel)
-        val current = store.state.value.layoutState.bgPickShown
+        val current = layoutState.bgPickShown
         if (!current) {
             showToolBoxToast(R.string.fcr_board_toast_change_bg)
         }
+        applyLayoutState { copy(bgPickShown = !bgPickShown, toolShown = false, strokeShown = false, downloadShown = false) }
     }
 
     private fun syncBoardBackground(color: Int, onSync: (Boolean) -> Unit) {
@@ -298,9 +313,8 @@ class WhiteboardControlLayout @JvmOverloads constructor(
 
     private fun setBoardBackgroundColor(color: Int) {
         whiteboardApp?.setBackgroundColor(color)
-        store.dispatch(
-            WhiteboardUiAction.ChangeBackground(color)
-        )
+        store.dispatch(WhiteboardUiAction.ChangeBackground(color))
+        applyLayoutState { copy(bgPickShown = false) }
     }
 
     private fun setBgPickLayoutVisible(visible: Boolean) {
@@ -380,7 +394,7 @@ class WhiteboardControlLayout @JvmOverloads constructor(
     }
 
     private fun setToolType(toolType: WhiteboardToolType) {
-        val current = store.state.value.drawState.toolType
+        val current = store.state.value.toolType
         if (toolType != current) {
             showToolBoxToast(findForgeConfig().provider.toolToast(toolType))
         }
@@ -451,8 +465,7 @@ class WhiteboardControlLayout @JvmOverloads constructor(
     /**
      * 更新工具箱选中状态
      */
-    private fun updateToolboxSelection(layoutState: LayoutState) {
-        val drawState = store.state.value.drawState
+    private fun updateToolboxSelection(layoutState: LayoutState, currentTool: WhiteboardToolType) {
         listOf(
             binding.phonePortLayout.boardToolBox,
             binding.phoneLoadLayout.boardToolBox,
@@ -462,17 +475,17 @@ class WhiteboardControlLayout @JvmOverloads constructor(
                 layoutState.strokeShown,
                 layoutState.bgPickShown,
                 layoutState.downloadShown,
-                drawState.toolType
+                currentTool
             )
         }
     }
 
     private fun syncBoardViewState() {
-        val current = store.state.value.drawState
-        setStrokeColor(current.strokeColor)
-        setStrokeWidth(current.strokeWidth)
-        setToolType(current.toolType)
-        whiteboardApp?.setFontSize(current.fontSize)
+        val s = store.state.value
+        setStrokeColor(s.strokeColor)
+        setStrokeWidth(s.strokeWidth)
+        setToolType(s.toolType)
+        whiteboardApp?.setFontSize(s.fontSize)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration?) {
@@ -534,4 +547,11 @@ class WhiteboardControlLayout @JvmOverloads constructor(
             }
         })
     }
+
+    data class LayoutState(
+        var strokeShown: Boolean = false,
+        var toolShown: Boolean = false,
+        var downloadShown: Boolean = false,
+        var bgPickShown: Boolean = false
+    )
 }

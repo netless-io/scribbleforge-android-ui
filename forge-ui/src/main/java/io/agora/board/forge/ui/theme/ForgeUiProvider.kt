@@ -7,12 +7,7 @@ interface ForgeUiProvider {
 
     fun toolIcon(toolType: WhiteboardToolType): Int
 
-    fun toolToast(toolType: WhiteboardToolType): Int
-
-    /** Action 类工具箱项的图标资源 */
     fun toolActionIcon(action: ToolBoxAction): Int
 
-    fun defaultStrokeWidth(): Int = 4
-
-    fun defaultStrokeColor(): Int
+    fun toolToast(toolType: WhiteboardToolType): Int
 }
