@@ -14,9 +14,10 @@ import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import io.agora.board.forge.ui.R
 import io.agora.board.forge.ui.databinding.FcrBoardToolBoxComponentBinding
 import io.agora.board.forge.ui.whiteboard.state.DrawState
-import io.agora.board.forge.ui.internal.findForgeConfig
+import io.agora.board.forge.ui.internal.findForgeConfigOrNull
+import io.agora.board.forge.ui.model.ToolBoxAction
+import io.agora.board.forge.ui.model.ToolBoxItem
 import io.agora.board.forge.whiteboard.WhiteboardToolType
-import kotlin.collections.indexOf
 
 /**
  * author : fenglibin
@@ -37,71 +38,41 @@ class FcrBoardToolBoxLayout @JvmOverloads constructor(
     }
 
     private var orientation: Int
-    private val binding = FcrBoardToolBoxComponentBinding.inflate(LayoutInflater.from(context), this)
+    private val binding =
+        FcrBoardToolBoxComponentBinding.inflate(LayoutInflater.from(context), this)
 
     private var toolBoxItems = mutableListOf(
-        ToolBoxItem(
-            FcrBoardToolBoxType.Clear,
-            R.drawable.fcr_ic_clear,
-        ),
-        ToolBoxItem(
-            FcrBoardToolBoxType.Undo,
-            R.drawable.fcr_ic_undo,
-        ),
-        ToolBoxItem(
-            FcrBoardToolBoxType.Redo,
-            R.drawable.fcr_ic_redo,
-        ),
-        ToolBoxItem(
-            FcrBoardToolBoxType.Tool,
-            R.mipmap.fcr_whiteboard_pen1,
-            listOf(WhiteboardToolType.CURVE)
-        ),
-        ToolBoxItem(
-            FcrBoardToolBoxType.Tool,
-            R.mipmap.fcr_whiteboard_laserpen2,
-            listOf(WhiteboardToolType.LASER)
-        ),
-        ToolBoxItem(
-            FcrBoardToolBoxType.Tool, R.mipmap.fcr_whiteboard_shap_square, listOf(
+        ToolBoxItem.Action(ToolBoxAction.Clear, false),
+        ToolBoxItem.Action(ToolBoxAction.Undo, false),
+        ToolBoxItem.Action(ToolBoxAction.Redo, false),
+        ToolBoxItem.Tool(listOf(WhiteboardToolType.CURVE), 0, false),
+        ToolBoxItem.Tool(listOf(WhiteboardToolType.LASER), 0, false),
+        ToolBoxItem.Tool(
+            listOf(
                 WhiteboardToolType.RECTANGLE,
                 WhiteboardToolType.TRIANGLE,
                 WhiteboardToolType.ELLIPSE,
                 WhiteboardToolType.LINE,
                 WhiteboardToolType.ARROW,
-            )
+            ),
+            0,
+            false
         ),
-        ToolBoxItem(
-            FcrBoardToolBoxType.Tool,
-            R.drawable.fcr_ic_tool_clicker,
-            listOf(WhiteboardToolType.POINTER, WhiteboardToolType.GRAB)
-        ),
-        ToolBoxItem(
-            FcrBoardToolBoxType.Tool,
-            R.mipmap.fcr_whiteboard_whitechoose,
-            listOf(WhiteboardToolType.SELECTOR)
-        ),
-        ToolBoxItem(
-            FcrBoardToolBoxType.Tool,
-            R.mipmap.fcr_mobile_whiteboard_eraser,
-            listOf(WhiteboardToolType.ERASER)
-        ),
-        ToolBoxItem(FcrBoardToolBoxType.Stroke, 0),
-        ToolBoxItem(
-            FcrBoardToolBoxType.Tool,
-            R.mipmap.fcr_mobile_whiteboard_text,
-            listOf(WhiteboardToolType.TEXT)
-        ),
-        ToolBoxItem(FcrBoardToolBoxType.Download, R.mipmap.fcr_download),
-        ToolBoxItem(FcrBoardToolBoxType.Background, R.mipmap.fcr_whiteboard_bg),
+        ToolBoxItem.Tool(listOf(WhiteboardToolType.POINTER, WhiteboardToolType.GRAB), 0, false),
+        ToolBoxItem.Tool(listOf(WhiteboardToolType.SELECTOR), 0, false),
+        ToolBoxItem.Tool(listOf(WhiteboardToolType.ERASER), 0, false),
+        ToolBoxItem.Action(ToolBoxAction.Stroke, false),
+        ToolBoxItem.Tool(listOf(WhiteboardToolType.TEXT), 0, false),
+        ToolBoxItem.Action(ToolBoxAction.Download, false),
+        ToolBoxItem.Action(ToolBoxAction.Background, false),
     )
 
-    private var toolBoxAdapter: FcrBoardToolBoxAdapter = FcrBoardToolBoxAdapter(toolBoxItems).apply {
-        setItemClickListener(this@FcrBoardToolBoxLayout)
-    }
+    private var toolBoxAdapter: FcrBoardToolBoxAdapter =
+        FcrBoardToolBoxAdapter(toolBoxItems).apply {
+            setItemClickListener(this@FcrBoardToolBoxLayout)
+        }
 
     private var toolBoxListener: ToolBoxListener? = null
-    private var toolBoxType: FcrBoardToolBoxType = FcrBoardToolBoxType.Tool
     private var drawState: DrawState? = null
 
     init {
@@ -117,9 +88,16 @@ class FcrBoardToolBoxLayout @JvmOverloads constructor(
         rvToolBox.adapter = toolBoxAdapter
         rvToolBox.layoutManager = ToolBoxLayoutManager(context, orientation)
         rvToolBox.addItemDecoration(object : ItemDecoration() {
-            override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-                val paddingMain = resources.getDimensionPixelSize(R.dimen.fcr_board_toolbox_item_space_main)
-                val paddingCross = resources.getDimensionPixelSize(R.dimen.fcr_board_toolbox_item_space_cross)
+            override fun getItemOffsets(
+                outRect: Rect,
+                view: View,
+                parent: RecyclerView,
+                state: RecyclerView.State
+            ) {
+                val paddingMain =
+                    resources.getDimensionPixelSize(R.dimen.fcr_board_toolbox_item_space_main)
+                val paddingCross =
+                    resources.getDimensionPixelSize(R.dimen.fcr_board_toolbox_item_space_cross)
                 if (orientation == HORIZONTAL) {
                     outRect.set(paddingMain, paddingCross, paddingMain, paddingCross)
                 } else {
@@ -137,6 +115,11 @@ class FcrBoardToolBoxLayout @JvmOverloads constructor(
         })
     }
 
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        findForgeConfigOrNull()?.provider?.let { toolBoxAdapter.provider = it }
+    }
+
     override fun onItemClick(position: Int) {
         toolBoxListener?.onToolBoxClick(toolBoxItems[position], position)
     }
@@ -152,34 +135,38 @@ class FcrBoardToolBoxLayout @JvmOverloads constructor(
 
     private fun updateDrawConfig() {
         val drawConfig = drawState ?: return
-        toolBoxItems.forEach { toolBoxItem ->
-            val indexOf = toolBoxItem.tools.indexOf(drawConfig.toolType)
-            if (indexOf >= 0) {
-                toolBoxItem.index = indexOf
-                toolBoxItem.iconResId = findForgeConfig().provider.toolIcon(drawConfig.toolType)
+        toolBoxItems.forEach { item ->
+            when (item) {
+                is ToolBoxItem.Tool -> {
+                    val indexOf = item.tools.indexOf(drawConfig.toolType)
+                    if (indexOf >= 0) {
+                        item.index = indexOf
+                    }
+                }
+
+                is ToolBoxItem.Action -> { /* icon from provider in adapter */
+                }
             }
         }
         toolBoxAdapter.setDrawConfig(drawConfig)
     }
 
-    fun setSelectionType(type: FcrBoardToolBoxType) {
-        when (type) {
-            FcrBoardToolBoxType.Stroke -> {
-                toolBoxItems.forEach { it.isSelected = it.type == FcrBoardToolBoxType.Stroke }
-            }
+    fun setSelectionType(
+        strokeShown: Boolean,
+        bgPickShown: Boolean,
+        downloadShown: Boolean,
+        currentTool: WhiteboardToolType?
+    ) {
+        toolBoxItems.forEach { item ->
+            when (item) {
+                is ToolBoxItem.Tool -> item.isSelected =
+                    currentTool != null && item.tools.contains(currentTool)
 
-            FcrBoardToolBoxType.Background -> {
-                toolBoxItems.forEach { it.isSelected = it.type == FcrBoardToolBoxType.Background }
-            }
-
-            FcrBoardToolBoxType.Download -> {
-                toolBoxItems.forEach { it.isSelected = it.type == FcrBoardToolBoxType.Download }
-            }
-
-            else -> {
-                toolBoxItems.forEach {
-                    val indexOf = it.tools.indexOf(drawState?.toolType)
-                    it.isSelected = indexOf >= 0
+                is ToolBoxItem.Action -> item.isSelected = when (item.action) {
+                    ToolBoxAction.Stroke -> strokeShown
+                    ToolBoxAction.Background -> bgPickShown
+                    ToolBoxAction.Download -> downloadShown
+                    else -> false
                 }
             }
         }
@@ -217,48 +204,4 @@ class FcrBoardToolBoxLayout @JvmOverloads constructor(
     interface ToolBoxListener {
         fun onToolBoxClick(item: ToolBoxItem, position: Int)
     }
-}
-
-data class ToolBoxItem(
-    val type: FcrBoardToolBoxType,
-    var iconResId: Int,
-    val tools: List<WhiteboardToolType> = listOf(),
-    var index: Int = 0,
-    var isSelected: Boolean = false,
-)
-
-/**
- * author : fenglibin
- * date : 2024/7/2
- * description : 白板布局 ToolBoxItem 类型
- */
-enum class FcrBoardToolBoxType {
-    /**
-     * 工具
-     */
-    Tool,
-
-    /**
-     * 属性选择
-     */
-    Stroke,
-
-    /**
-     * 清除
-     */
-    Clear,
-
-    Undo,
-
-    Redo,
-
-    /**
-     * 下载
-     */
-    Download,
-
-    /**
-     * 背景选择
-     */
-    Background,
 }

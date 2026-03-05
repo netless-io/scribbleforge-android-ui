@@ -28,9 +28,9 @@ import io.agora.board.forge.ui.whiteboard.component.FcrBoardBgPickLayout
 import io.agora.board.forge.ui.whiteboard.component.FcrBoardColorPickLayout
 import io.agora.board.forge.ui.whiteboard.component.FcrBoardShapePickLayout
 import io.agora.board.forge.ui.whiteboard.component.FcrBoardToolBoxLayout
-import io.agora.board.forge.ui.whiteboard.component.FcrBoardToolBoxType
 import io.agora.board.forge.ui.whiteboard.component.FcrBoardUiDownloadingState
-import io.agora.board.forge.ui.whiteboard.component.ToolBoxItem
+import io.agora.board.forge.ui.model.ToolBoxItem
+import io.agora.board.forge.ui.model.ToolBoxAction
 import io.agora.board.forge.whiteboard.SimpleWhiteboardListener
 import io.agora.board.forge.whiteboard.WhiteboardApplication
 import io.agora.board.forge.whiteboard.WhiteboardToolInfo
@@ -83,14 +83,16 @@ class WhiteboardControlLayout @JvmOverloads constructor(
     private fun setupToolBoxListener() {
         val toolBoxListener = object : FcrBoardToolBoxLayout.ToolBoxListener {
             override fun onToolBoxClick(item: ToolBoxItem, position: Int) {
-                when (item.type) {
-                    FcrBoardToolBoxType.Tool -> onToolClick(item)
-                    FcrBoardToolBoxType.Stroke -> onColorPickClick()
-                    FcrBoardToolBoxType.Clear -> onClearClick()
-                    FcrBoardToolBoxType.Undo -> onUndoClick()
-                    FcrBoardToolBoxType.Redo -> onRedoClick()
-                    FcrBoardToolBoxType.Download -> onDownloadClick()
-                    FcrBoardToolBoxType.Background -> onBgPickClick()
+                when (item) {
+                    is ToolBoxItem.Tool -> onToolClick(item)
+                    is ToolBoxItem.Action -> when (item.action) {
+                        ToolBoxAction.Clear -> onClearClick()
+                        ToolBoxAction.Stroke -> onColorPickClick()
+                        ToolBoxAction.Undo -> onUndoClick()
+                        ToolBoxAction.Redo -> onRedoClick()
+                        ToolBoxAction.Download -> onDownloadClick()
+                        ToolBoxAction.Background -> onBgPickClick()
+                    }
                 }
             }
         }
@@ -195,7 +197,7 @@ class WhiteboardControlLayout @JvmOverloads constructor(
         whiteboardApp?.redo()
     }
 
-    private fun onToolClick(item: ToolBoxItem) {
+    private fun onToolClick(item: ToolBoxItem.Tool) {
         if (item.tools.size > 1) {
             val open = store.state.value.layoutState.toolShown
             if (open) {
@@ -450,17 +452,19 @@ class WhiteboardControlLayout @JvmOverloads constructor(
      * 更新工具箱选中状态
      */
     private fun updateToolboxSelection(layoutState: LayoutState) {
-        val type = when (true) {
-            layoutState.strokeShown -> FcrBoardToolBoxType.Stroke
-            layoutState.bgPickShown -> FcrBoardToolBoxType.Background
-            layoutState.downloadShown -> FcrBoardToolBoxType.Download
-            else -> FcrBoardToolBoxType.Tool
-        }
+        val drawState = store.state.value.drawState
         listOf(
             binding.phonePortLayout.boardToolBox,
             binding.phoneLoadLayout.boardToolBox,
             binding.tabletLayout.boardToolBox
-        ).forEach { it.setSelectionType(type) }
+        ).forEach {
+            it.setSelectionType(
+                layoutState.strokeShown,
+                layoutState.bgPickShown,
+                layoutState.downloadShown,
+                drawState.toolType
+            )
+        }
     }
 
     private fun syncBoardViewState() {

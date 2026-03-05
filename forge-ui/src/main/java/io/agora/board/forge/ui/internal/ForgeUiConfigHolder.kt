@@ -11,11 +11,15 @@ fun View.setForgeConfig(config: ForgeUIConfig) {
 }
 
 fun View.findForgeConfig(): ForgeUIConfig {
+    return findForgeConfigOrNull() ?: error("ForgeUIConfig not found. Ensure the view is under a parent that called setForgeConfig (e.g. WhiteboardContainerView).")
+}
+
+fun View.findForgeConfigOrNull(): ForgeUIConfig? {
     var current: View? = this
     while (current != null) {
         val scope = current.getTag(CONFIG_TAG_KEY) as? ForgeUIConfig
         if (scope != null) return scope
         current = current.parent as? View
     }
-    error("ForgeScope not found")
+    return null
 }

@@ -6,6 +6,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.agora.board.forge.ui.databinding.FcrBoardToolBoxItemBinding
 import io.agora.board.forge.ui.internal.FoundationUtils
+import io.agora.board.forge.ui.internal.findForgeConfigOrNull
+import io.agora.board.forge.ui.model.ToolBoxAction
+import io.agora.board.forge.ui.model.ToolBoxItem
+import io.agora.board.forge.ui.theme.ForgeUiProvider
+import io.agora.board.forge.ui.theme.ForgeUiDefaultProvider
 import io.agora.board.forge.ui.whiteboard.state.DrawState
 
 /**
@@ -19,6 +24,13 @@ class FcrBoardToolBoxAdapter(private var itemList: List<ToolBoxItem>) :
     private var drawState: DrawState? = null
     private var onItemClickListener: OnItemClickListener? = null
 
+    /** 由 FcrBoardToolBoxLayout 在 onAttachedToWindow 时注入，避免 item 尚未 attach 时 findForgeConfig 崩溃 */
+    var provider: ForgeUiProvider? = null
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = FcrBoardToolBoxItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
@@ -28,12 +40,23 @@ class FcrBoardToolBoxAdapter(private var itemList: List<ToolBoxItem>) :
         val item = itemList[position]
         val binding = holder.binding
         val context = binding.root.context
+        val provider = this.provider
+            ?: binding.root.findForgeConfigOrNull()?.provider
+            ?: fallbackProvider
 
-        binding.ivIcon.setImageResource(item.iconResId)
+        val iconResId = when (item) {
+            is ToolBoxItem.Tool -> {
+                val tool = item.tools.getOrNull(item.index) ?: item.tools.firstOrNull()
+                if (tool != null) provider.toolIcon(tool) else 0
+            }
+            is ToolBoxItem.Action -> provider.toolActionIcon(item.action)
+        }
+        binding.ivIcon.setImageResource(iconResId)
         binding.ivIcon.visibility = View.VISIBLE
         binding.vBackground.isSelected = item.isSelected
 
-        if (item.type == FcrBoardToolBoxType.Stroke) {
+        val isStrokeAction = item is ToolBoxItem.Action && item.action == ToolBoxAction.Stroke
+        if (isStrokeAction) {
             binding.flStroke.visibility = View.VISIBLE
             drawState?.let {
                 binding.strokeDot.setDotColor(it.strokeColor)
@@ -43,10 +66,13 @@ class FcrBoardToolBoxAdapter(private var itemList: List<ToolBoxItem>) :
             binding.flStroke.visibility = View.GONE
         }
 
-        val enabled = when (item.type) {
-            FcrBoardToolBoxType.Undo -> drawState?.undo ?: false
-            FcrBoardToolBoxType.Redo -> drawState?.redo ?: false
-            else -> true
+        val enabled = when (item) {
+            is ToolBoxItem.Action -> when (item.action) {
+                ToolBoxAction.Undo -> drawState?.undo ?: false
+                ToolBoxAction.Redo -> drawState?.redo ?: false
+                else -> true
+            }
+            is ToolBoxItem.Tool -> true
         }
         binding.ivIcon.alpha = if (enabled) 1f else 0.5f
         binding.ivIcon.isEnabled = enabled
@@ -78,5 +104,9 @@ class FcrBoardToolBoxAdapter(private var itemList: List<ToolBoxItem>) :
 
     fun interface OnItemClickListener {
         fun onItemClick(position: Int)
+    }
+
+    companion object {
+        private val fallbackProvider = ForgeUiDefaultProvider()
     }
 }

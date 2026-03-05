@@ -1,6 +1,7 @@
 package io.agora.board.forge.ui.theme
 
 import io.agora.board.forge.ui.R
+import io.agora.board.forge.ui.model.ToolBoxAction
 import io.agora.board.forge.whiteboard.WhiteboardToolType
 
 class ForgeUiDefaultProvider : ForgeUiProvider {
@@ -18,6 +19,15 @@ class ForgeUiDefaultProvider : ForgeUiProvider {
         WhiteboardToolType.ELLIPSE -> R.mipmap.fcr_whiteboard_shap_circle
         WhiteboardToolType.GRAB -> R.mipmap.fcr_whiteboard_hand
         else -> 0
+    }
+
+    override fun toolActionIcon(action: ToolBoxAction): Int = when (action) {
+        ToolBoxAction.Clear -> R.drawable.fcr_ic_clear
+        ToolBoxAction.Undo -> R.drawable.fcr_ic_undo
+        ToolBoxAction.Redo -> R.drawable.fcr_ic_redo
+        ToolBoxAction.Stroke -> 0
+        ToolBoxAction.Download -> R.mipmap.fcr_download
+        ToolBoxAction.Background -> R.mipmap.fcr_whiteboard_bg
     }
 
     override fun toolToast(toolType: WhiteboardToolType): Int = when (toolType) {
